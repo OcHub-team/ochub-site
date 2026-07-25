@@ -81,6 +81,9 @@ toggle cycles auto → light → dark and persists to localStorage.
 
 ## Deploy
 
-GitHub Pages serves `main` / root (enabled via
-`gh api repos/OcHub-team/ochub-site/pages`). Redeploy = push to `main`.
-Move to Cloudflare next to docs.ochub.org when the apex domain is ready.
+`.github/workflows/deploy.yml` builds `dist/` with pnpm and deploys it to
+GitHub Pages (source: GitHub Actions — branch serving can't work here
+because `dist/` is gitignored). Redeploy = push to `main`; rebuild to pick
+up a new OcHub release = **Actions → Deploy to GitHub Pages → Run
+workflow**. Move to Cloudflare next to docs.ochub.org when the apex domain
+is ready.
