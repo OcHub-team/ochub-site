@@ -1,0 +1,1219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OcHub — One hub for every AI coding tool</title>
+<meta name="description" content="OcHub is a native desktop control center for AI coding tools. Switch providers, manage shared capabilities, and run a local relay from one place.">
+
+<!-- Design prototype only. Fonts via jsDelivr (fontsource). -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/space-grotesk@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans@5/600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5/index.css">
+
+<style>
+/* ============================================================
+   OcHub landing — design prototype
+   Theme: auto via `color-scheme` + light-dark(); explicit
+   override by setting <html data-theme="light|dark">.
+   ============================================================ */
+
+:root { color-scheme: light dark; }
+html[data-theme="light"] { color-scheme: light; }
+html[data-theme="dark"]  { color-scheme: dark; }
+
+:root {
+  /* Type */
+  --font-display: "Space Grotesk Variable", "Space Grotesk", "IBM Plex Sans", -apple-system, "Noto Sans SC", sans-serif;
+  --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Noto Sans JP", sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Palette — light side echoes the app's own warm sand tokens,
+     dark side is a teal-tinted charcoal. Never pure black/white. */
+  --bg:             light-dark(oklch(0.988 0.003 95),  oklch(0.178 0.010 205));
+  --mantle:         light-dark(oklch(0.962 0.004 95),  oklch(0.215 0.012 205));
+  --surface:        light-dark(oklch(0.997 0.002 95),  oklch(0.240 0.014 205));
+  --panel:          light-dark(oklch(0.975 0.004 95),  oklch(0.225 0.012 205));
+  --inset:          light-dark(oklch(0.948 0.005 95),  oklch(0.275 0.015 205));
+  --border:         light-dark(oklch(0.912 0.006 95),  oklch(0.315 0.015 205));
+  --border-strong:  light-dark(oklch(0.846 0.007 95),  oklch(0.400 0.017 205));
+  --text:           light-dark(oklch(0.265 0.015 80),  oklch(0.948 0.006 180));
+  --subtext:        light-dark(oklch(0.475 0.012 85),  oklch(0.735 0.012 205));
+  --muted:          light-dark(oklch(0.615 0.010 90),  oklch(0.560 0.012 205));
+
+  /* Brand teal (#31b8b5) — the sharp accent on quiet neutrals. */
+  --teal:           light-dark(oklch(0.700 0.098 192), oklch(0.800 0.110 190));
+  --teal-ink:       light-dark(oklch(0.520 0.085 195), oklch(0.800 0.110 190));
+  --teal-soft:      light-dark(oklch(0.940 0.030 195), oklch(0.320 0.045 200));
+  --on-teal:        light-dark(oklch(0.175 0.020 210), oklch(0.130 0.015 210));
+
+  /* Inverted "under the hood" band */
+  --band-bg:        light-dark(oklch(0.235 0.016 90),  oklch(0.140 0.008 205));
+  --band-line:      light-dark(oklch(0.360 0.015 95),  oklch(0.280 0.012 205));
+  --band-text:      light-dark(oklch(0.950 0.006 95),  oklch(0.930 0.006 180));
+  --band-sub:       light-dark(oklch(0.710 0.012 95),  oklch(0.640 0.012 205));
+
+  /* The mascot inverts like the brand wordmark: dark robot on
+     light pages, light robot on dark pages. */
+  --robot-ink:      light-dark(oklch(0.265 0.015 80),  oklch(0.948 0.006 180));
+  --robot-face:     light-dark(oklch(0.988 0.003 95),  oklch(0.178 0.010 205));
+
+  /* The CSS app window is always light — the real app ships a
+     light UI today (dark is architected, not shipped). */
+  --app-bg: #fcfcfb; --app-mantle: #f4f4f2; --app-surface: #ffffff;
+  --app-panel: #f8f8f6; --app-border: #e7e6e2; --app-border2: #d6d5d0;
+  --app-text: #222019; --app-sub: #6b6a64; --app-muted: #91908a;
+  --app-teal: #157a78; --app-teal-soft: #e4f4f3; --app-green: #1d9e57;
+
+  --radius: 14px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --wrap: 1160px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+::selection { background: color-mix(in oklch, var(--teal) 30%, transparent); }
+
+a { color: var(--teal-ink); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { text-decoration-style: solid; }
+
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.015em; }
+code, pre, .mono { font-family: var(--font-mono); }
+
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: clamp(20px, 4vw, 40px); }
+
+.skip {
+  position: absolute; left: -9999px; top: 8px; z-index: 100;
+  background: var(--surface); color: var(--text); padding: 8px 14px;
+  border: 1px solid var(--border-strong); border-radius: 8px;
+}
+.skip:focus { left: 8px; }
+
+:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
+
+/* ---------- eyebrow / section headers ---------- */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal-ink);
+  display: flex; align-items: center; gap: 10px;
+}
+.eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--teal); }
+
+/* ===================== NAV ===================== */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  background: color-mix(in oklch, var(--bg) 78%, transparent);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex; align-items: center; gap: 28px;
+  height: 60px;
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+.brand svg { width: 30px; height: auto; display: block; }
+.brand span { font-family: var(--font-display); font-weight: 600; font-size: 1.14rem; letter-spacing: -0.01em; }
+.nav-links { display: flex; gap: 26px; margin-left: 12px; }
+.nav-links a {
+  color: var(--subtext); text-decoration: none; font-size: 0.94rem;
+  transition: color 0.18s var(--ease-out);
+}
+.nav-links a:hover { color: var(--text); }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 9px;
+  border: 1px solid transparent; background: none; cursor: pointer;
+  color: var(--subtext); transition: all 0.18s var(--ease-out);
+}
+.icon-btn:hover { color: var(--text); background: var(--inset); }
+.icon-btn svg { width: 18px; height: 18px; }
+.locale-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.85rem; color: var(--subtext);
+  padding: 6px 10px; border-radius: 9px; border: 1px solid transparent;
+  background: none; cursor: pointer; font-family: var(--font-body);
+}
+.locale-chip:hover { background: var(--inset); color: var(--text); }
+.locale-chip svg { width: 12px; height: 12px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-body); font-weight: 500; font-size: 0.94rem;
+  border-radius: 10px; padding: 9px 18px; cursor: pointer;
+  text-decoration: none; border: 1px solid transparent;
+  transition: transform 0.18s var(--ease-out), background 0.18s var(--ease-out),
+              border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
+}
+.btn:active { transform: translateY(1px) scale(0.99); }
+.btn-primary { background: var(--text); color: var(--bg); }
+.btn-primary:hover { background: color-mix(in oklch, var(--text) 86%, var(--teal)); }
+.btn-ghost { border-color: var(--border-strong); color: var(--text); background: none; }
+.btn-ghost:hover { background: var(--inset); }
+.btn-small { padding: 7px 14px; font-size: 0.88rem; }
+
+/* ===================== HERO ===================== */
+.hero {
+  position: relative;
+  padding: clamp(64px, 9vh, 110px) 0 clamp(56px, 7vh, 90px);
+  overflow: clip;
+}
+/* faint engineering grid, tinted toward brand hue, masked away at edges */
+.hero::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--teal) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--teal) 7%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 90% 75% at 65% 30%, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 75% at 65% 30%, black 20%, transparent 75%);
+}
+.hero-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 5.2fr) minmax(0, 5.8fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+.hero-grid > * { min-width: 0; }
+.version-pill {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-mono); font-size: 0.78rem;
+  color: var(--subtext);
+  border: 1px solid var(--border); border-radius: 999px;
+  padding: 5px 13px 5px 9px; margin-bottom: 26px;
+  background: var(--surface);
+}
+.version-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+.version-pill b { color: var(--text); font-weight: 500; }
+.hero h1 {
+  font-size: clamp(2.55rem, 4.6vw, 3.9rem);
+  line-height: 1.06;
+  font-weight: 600;
+  max-width: 16.5ch;
+}
+.hero h1 em { font-style: normal; color: var(--teal-ink); }
+.hero-sub {
+  margin-top: 22px; max-width: 46ch;
+  color: var(--subtext); font-size: 1.13rem; line-height: 1.6;
+}
+.hero-cta { margin-top: 32px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.hero-cta .btn { padding: 12px 22px; font-size: 1rem; }
+.brew-chip {
+  display: inline-flex; align-items: center; gap: 10px;
+  border: 1px solid var(--border); background: var(--panel);
+  border-radius: 10px; padding: 11px 8px 11px 16px;
+  font-size: 0.86rem; color: var(--subtext);
+  max-width: 100%; overflow-x: auto; scrollbar-width: none;
+}
+.brew-chip::-webkit-scrollbar { display: none; }
+.brew-chip code { font-size: 0.84rem; color: var(--text); white-space: nowrap; }
+.copy-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 7px; border: none;
+  background: var(--inset); color: var(--subtext); cursor: pointer;
+  transition: all 0.15s var(--ease-out); flex: none;
+}
+.copy-btn:hover { color: var(--text); background: var(--border); }
+.copy-btn svg { width: 14px; height: 14px; }
+.hero-note {
+  margin-top: 18px; font-size: 0.85rem; color: var(--muted);
+  display: flex; align-items: center; gap: 7px;
+}
+.hero-note svg { width: 14px; height: 14px; flex: none; }
+
+/* entrance choreography — transform/opacity only */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rise { animation: rise 0.9s var(--ease-out) both; animation-delay: var(--d, 0s); }
+
+/* ---- hero visual: the app window + mascot ---- */
+.hero-visual { position: relative; }
+.mascot {
+  position: absolute; z-index: 3;
+  width: clamp(88px, 9vw, 118px);
+  top: -58px; right: 8%;
+  filter: drop-shadow(0 10px 22px color-mix(in oklch, var(--text) 18%, transparent));
+}
+.mascot svg { display: block; width: 100%; height: auto; }
+
+/* CSS replica of the real GPUI app (light UI, as shipped) */
+.appwin {
+  position: relative; z-index: 2;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius);
+  box-shadow:
+    0 1px 2px rgb(24 22 14 / 0.04),
+    0 12px 32px -8px rgb(24 22 14 / 0.10),
+    0 40px 90px -24px rgb(24 22 14 / 0.16);
+  overflow: hidden;
+  font-size: 10.5px; line-height: 1.45;
+  color: var(--app-text);
+  transform: rotate(0.4deg);
+}
+.appwin-titlebar {
+  height: 34px; display: flex; align-items: center; gap: 8px;
+  padding: 0 12px; background: var(--app-mantle);
+  border-bottom: 1px solid var(--app-border);
+}
+.tl { width: 10px; height: 10px; border-radius: 50%; }
+.tl.r { background: #ff5f57; } .tl.y { background: #febc2e; } .tl.g { background: #28c840; }
+.appwin-titlebar .t {
+  margin-left: 8px; color: var(--app-sub); font-weight: 500; letter-spacing: 0.01em;
+}
+.appwin-body { display: grid; grid-template-columns: 138px minmax(0, 1fr); min-height: 300px; }
+.appwin-side {
+  background: var(--app-mantle); border-right: 1px solid var(--app-border);
+  padding: 10px 8px;
+}
+.side-group { margin-bottom: 12px; }
+.side-label {
+  font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--app-muted); padding: 0 8px 4px; font-weight: 600;
+}
+.side-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 8px; border-radius: 6px; color: var(--app-sub);
+  font-weight: 500; white-space: nowrap;
+}
+.side-row .sd { width: 5px; height: 5px; border-radius: 50%; background: var(--app-border2); flex: none; }
+.side-row.active { background: var(--app-surface); color: var(--app-text); box-shadow: inset 0 0 0 1px var(--app-border); }
+.side-row.active .sd { background: var(--app-green); }
+.appwin-main { padding: 13px 15px 0; display: flex; flex-direction: column; min-width: 0; }
+.appwin-main .u, .conn-hero .u, .conn-row .u {
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.conn-hero > div, .conn-row > div { min-width: 0; }
+.crumb { color: var(--app-muted); font-size: 9.5px; }
+.crumb b { color: var(--app-text); font-weight: 600; font-size: 12.5px; display: block; margin-top: 1px; }
+.conn-hero {
+  margin-top: 9px; background: var(--app-panel);
+  border: 1px solid var(--app-border); border-radius: 9px; padding: 9px 11px;
+  display: flex; align-items: center; gap: 9px;
+}
+.conn-hero .live { width: 7px; height: 7px; border-radius: 50%; background: var(--app-green); flex: none; }
+.conn-hero .n { font-weight: 600; font-size: 11.5px; }
+.conn-hero .u { color: var(--app-muted); font-family: var(--font-mono); font-size: 8.5px; }
+.badge {
+  display: inline-flex; align-items: center; border-radius: 999px;
+  font-size: 8px; font-weight: 600; letter-spacing: 0.04em; padding: 2px 7px;
+}
+.badge.cur { background: var(--app-teal-soft); color: var(--app-teal); }
+.seg {
+  margin-left: auto; display: inline-flex; background: var(--app-mantle);
+  border: 1px solid var(--app-border); border-radius: 7px; padding: 2px; gap: 2px;
+}
+.seg span { padding: 2.5px 9px; border-radius: 5px; font-weight: 500; color: var(--app-sub); }
+.seg span.on { background: var(--app-surface); color: var(--app-text); box-shadow: 0 1px 2px rgb(0 0 0 / 0.08); }
+.list-label {
+  margin: 11px 0 5px; font-size: 8.5px; text-transform: uppercase;
+  letter-spacing: 0.09em; color: var(--app-muted); font-weight: 600;
+}
+.conn-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6.5px 9px; border: 1px solid var(--app-border);
+  border-radius: 8px; margin-bottom: 5px; background: var(--app-surface);
+}
+.conn-row .grip { color: var(--app-border2); font-family: var(--font-mono); letter-spacing: -1px; font-size: 9px; }
+.conn-row .n { font-weight: 500; }
+.conn-row .u { color: var(--app-muted); font-family: var(--font-mono); font-size: 8.5px; }
+.badge.dir { background: var(--app-mantle); color: var(--app-sub); border: 1px solid var(--app-border); }
+.badge.rel { background: var(--app-teal-soft); color: var(--app-teal); }
+.conn-row .sw {
+  margin-left: auto; border: 1px solid var(--app-border2); border-radius: 6px;
+  padding: 2.5px 9px; font-weight: 500; color: var(--app-sub); background: var(--app-surface);
+}
+.conn-row.relay { border-color: #bfe3e1; background: #f2fafa; }
+.conn-add {
+  border: 1px dashed var(--app-border2); border-radius: 8px;
+  padding: 6px 9px; color: var(--app-muted); text-align: center; font-weight: 500;
+}
+.appwin-status {
+  margin-top: auto; border-top: 1px solid var(--app-border);
+  padding: 6px 15px; display: flex; align-items: center; gap: 6px;
+  color: var(--app-muted); font-size: 9px;
+}
+.appwin-status svg { width: 10px; height: 10px; color: var(--app-green); }
+.appwin-status .v { margin-left: auto; font-family: var(--font-mono); }
+
+/* ===================== TOOLS STRIP ===================== */
+.tools { border-block: 1px solid var(--border); background: var(--mantle); }
+.tools-inner {
+  display: flex; align-items: center; gap: clamp(18px, 3vw, 40px);
+  padding-block: 20px; flex-wrap: wrap;
+}
+.tools-label {
+  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted); flex: none;
+}
+.tools-list {
+  display: flex; gap: clamp(16px, 2.6vw, 34px); flex-wrap: wrap; align-items: center;
+}
+.tools-list span {
+  font-family: var(--font-display); font-weight: 500; font-size: 1.02rem;
+  color: var(--subtext); letter-spacing: -0.01em;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: color 0.2s var(--ease-out);
+}
+.tools-list span:hover { color: var(--text); }
+.tools-list .tdot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal); flex: none; }
+
+/* ===================== CAPABILITIES ===================== */
+.section { padding: clamp(72px, 11vh, 130px) 0; }
+.cap-grid {
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  gap: clamp(32px, 6vw, 90px);
+}
+.cap-head { position: sticky; top: 96px; align-self: start; }
+.cap-head h2 { font-size: clamp(1.9rem, 3.2vw, 2.7rem); line-height: 1.12; margin-top: 18px; max-width: 12ch; }
+.cap-head p { margin-top: 16px; color: var(--subtext); max-width: 34ch; }
+.cap-list { display: flex; flex-direction: column; }
+.cap-item {
+  display: grid; grid-template-columns: 58px 1fr; gap: 20px;
+  padding: 28px 0; border-top: 1px solid var(--border);
+}
+.cap-item:last-child { border-bottom: 1px solid var(--border); }
+.cap-num {
+  font-family: var(--font-mono); font-size: 0.82rem; color: var(--teal-ink);
+  padding-top: 5px;
+}
+.cap-item h3 { font-size: 1.32rem; font-weight: 600; letter-spacing: -0.01em; }
+.cap-item p { margin-top: 8px; color: var(--subtext); max-width: 56ch; }
+.cap-chips { margin-top: 13px; display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--subtext);
+  border: 1px solid var(--border); background: var(--panel);
+  padding: 3px 10px; border-radius: 999px; white-space: nowrap;
+}
+
+/* ===================== RELAY ===================== */
+.relay { background: var(--mantle); border-block: 1px solid var(--border); }
+.relay-grid {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(36px, 5vw, 80px); align-items: center;
+}
+.relay h2 { font-size: clamp(1.9rem, 3.2vw, 2.7rem); line-height: 1.12; margin-top: 18px; max-width: 16ch; }
+.relay-copy > p { margin-top: 16px; color: var(--subtext); max-width: 46ch; }
+.relay-feats { margin-top: 26px; display: flex; flex-direction: column; gap: 0; }
+.relay-feat {
+  display: flex; gap: 14px; padding: 13px 0; border-top: 1px solid var(--border);
+}
+.relay-feat:last-child { border-bottom: 1px solid var(--border); }
+.relay-feat svg { width: 17px; height: 17px; color: var(--teal-ink); flex: none; margin-top: 3px; }
+.relay-feat b { font-weight: 600; font-size: 0.98rem; display: block; }
+.relay-feat span { color: var(--subtext); font-size: 0.93rem; }
+
+.diagram {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: clamp(18px, 3vw, 32px);
+  box-shadow: 0 24px 60px -32px color-mix(in oklch, var(--text) 25%, transparent);
+}
+.diagram svg { display: block; width: 100%; height: auto; }
+.diagram-cap {
+  margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border);
+  font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted);
+  display: flex; flex-wrap: wrap; gap: 6px 16px;
+}
+@keyframes flow { to { stroke-dashoffset: -20; } }
+.flow-line { stroke-dasharray: 3 7; animation: flow 1.4s linear infinite; }
+
+/* ===================== NATIVE BAND ===================== */
+.band {
+  background: var(--band-bg); color: var(--band-text);
+  position: relative; overflow: clip;
+}
+.band::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(to right, color-mix(in oklch, var(--teal) 6%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to bottom, black, transparent 80%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 80%);
+}
+.band .wrap { position: relative; }
+.band .eyebrow { color: var(--teal); }
+.band h2 { font-size: clamp(2rem, 3.6vw, 3rem); line-height: 1.08; margin-top: 18px; max-width: 18ch; }
+.band h2 em { font-style: normal; color: var(--teal); }
+.band-lede { margin-top: 18px; color: var(--band-sub); max-width: 58ch; font-size: 1.08rem; }
+.band-cols {
+  margin-top: clamp(36px, 5vh, 56px);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--band-line);
+}
+.band-col { padding: 22px 22px 0 0; }
+.band-col + .band-col { border-left: 1px solid var(--band-line); padding-left: 22px; }
+.band-col .k { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); }
+.band-col .v { margin-top: 8px; font-weight: 600; font-size: 1.02rem; font-family: var(--font-display); }
+.band-col .d { margin-top: 6px; color: var(--band-sub); font-size: 0.9rem; line-height: 1.55; }
+.band-no {
+  margin-top: clamp(36px, 5vh, 52px); padding-top: 22px;
+  border-top: 1px solid var(--band-line);
+  display: flex; gap: clamp(18px, 3vw, 40px); flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 0.85rem; color: var(--band-sub);
+}
+.band-no span { display: inline-flex; align-items: center; gap: 9px; }
+.band-no svg { width: 15px; height: 15px; color: var(--teal); }
+
+/* ===================== DOWNLOAD ===================== */
+.dl-grid {
+  display: grid; grid-template-columns: minmax(0, 6.4fr) minmax(0, 4.6fr);
+  gap: clamp(32px, 5vw, 72px);
+}
+.dl h2 { font-size: clamp(1.9rem, 3.2vw, 2.7rem); margin-top: 18px; }
+.dl-sub { margin-top: 14px; color: var(--subtext); max-width: 52ch; }
+.plat-list { margin-top: 34px; border-top: 1px solid var(--border); }
+.plat {
+  display: grid; grid-template-columns: 1fr auto; gap: 6px 18px;
+  align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border);
+}
+.plat .os { font-weight: 600; font-size: 1.06rem; font-family: var(--font-display); letter-spacing: -0.01em; }
+.plat .arch { font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); margin-left: 10px; font-weight: 400; }
+.plat .files { display: flex; gap: 6px; flex-wrap: wrap; grid-column: 1; }
+.plat .get { grid-row: 1 / span 2; grid-column: 2; align-self: center; }
+.file-tag {
+  font-family: var(--font-mono); font-size: 0.74rem;
+  border: 1px solid var(--border); background: var(--panel);
+  color: var(--subtext); border-radius: 6px; padding: 2.5px 9px;
+}
+.dl-aside { display: flex; flex-direction: column; gap: 22px; margin-top: 34px; }
+.term-card {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--panel); overflow: hidden;
+}
+.term-card .th {
+  padding: 10px 16px; border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.term-card pre {
+  padding: 14px 16px; font-size: 0.8rem; line-height: 1.7;
+  overflow-x: auto; color: var(--text);
+}
+.term-card pre .c { color: var(--muted); }
+.term-card pre .p { color: var(--teal-ink); user-select: none; }
+.note-card {
+  border: 1px solid var(--border); border-left: 3px solid var(--teal);
+  border-radius: 10px; padding: 14px 16px; background: var(--surface);
+  font-size: 0.9rem; color: var(--subtext);
+}
+.note-card b { color: var(--text); }
+.update-line {
+  margin-top: 30px; display: flex; gap: 10px; align-items: flex-start;
+  color: var(--subtext); font-size: 0.92rem; max-width: 64ch;
+}
+.update-line svg { width: 16px; height: 16px; color: var(--teal-ink); flex: none; margin-top: 3px; }
+
+/* ===================== MIGRATION STRIP ===================== */
+.migrate { padding: 0 0 clamp(72px, 10vh, 120px); }
+.migrate-card {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface);
+  padding: clamp(22px, 3vw, 34px) clamp(24px, 3.4vw, 40px);
+  display: flex; align-items: center; gap: clamp(20px, 3vw, 36px); flex-wrap: wrap;
+}
+.migrate-card .mq {
+  font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; letter-spacing: -0.01em;
+}
+.migrate-card p { color: var(--subtext); font-size: 0.95rem; max-width: 52ch; margin-top: 4px; }
+.migrate-card code { font-size: 0.82em; background: var(--inset); padding: 1.5px 6px; border-radius: 5px; }
+.migrate-card .btn { margin-left: auto; }
+
+/* ===================== FOOTER ===================== */
+footer { border-top: 1px solid var(--border); background: var(--mantle); }
+.foot-grid {
+  padding: clamp(44px, 6vh, 64px) 0 34px;
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 2.5fr) minmax(0, 2.5fr) minmax(0, 2fr);
+  gap: clamp(28px, 4vw, 56px);
+}
+.foot-brand svg { width: 38px; height: auto; }
+.foot-brand p { margin-top: 14px; color: var(--subtext); font-size: 0.9rem; max-width: 36ch; }
+.foot-h { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.foot-links { display: flex; flex-direction: column; gap: 9px; }
+.foot-links a { color: var(--subtext); text-decoration: none; font-size: 0.93rem; }
+.foot-links a:hover { color: var(--text); }
+.foot-locales { display: flex; flex-direction: column; gap: 9px; }
+.foot-locales button {
+  background: none; border: none; padding: 0; cursor: pointer;
+  color: var(--subtext); font-size: 0.93rem; text-align: left; font-family: var(--font-body);
+}
+.foot-locales button.on { color: var(--teal-ink); font-weight: 500; }
+.foot-locales button:hover { color: var(--text); }
+.foot-base {
+  border-top: 1px solid var(--border); padding: 20px 0 26px;
+  display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+  color: var(--muted); font-size: 0.84rem;
+}
+.foot-base a { color: var(--muted); }
+.foot-base .r { margin-left: auto; font-family: var(--font-mono); font-size: 0.78rem; }
+
+/* ===================== REVEAL ===================== */
+[data-reveal] { opacity: 0; transform: translateY(20px); }
+[data-reveal].in {
+  opacity: 1; transform: translateY(0);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+  transition-delay: var(--d, 0s);
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 1020px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-visual { margin-top: 30px; }
+  .mascot { top: -46px; }
+  .cap-grid, .relay-grid, .dl-grid { grid-template-columns: 1fr; }
+  .cap-head { position: static; }
+  .band-cols { grid-template-columns: 1fr 1fr; row-gap: 26px; }
+  .band-col:nth-child(3) { border-left: none; padding-left: 0; }
+  .foot-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .band-cols { grid-template-columns: 1fr; }
+  .band-col + .band-col { border-left: none; padding-left: 0; }
+  .plat { grid-template-columns: 1fr; }
+  .plat .get { grid-row: auto; grid-column: 1; justify-self: start; margin-top: 6px; }
+  .foot-grid { grid-template-columns: 1fr; }
+  .appwin { font-size: 9.5px; }
+  .appwin-body { grid-template-columns: 112px minmax(0, 1fr); }
+  .migrate-card .btn { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  [data-reveal] { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ===================== NAV ===================== -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#" aria-label="OcHub home">
+      <!-- mini mascot -->
+      <svg viewBox="0 0 240 214" aria-hidden="true">
+        <rect x="24" y="52" width="192" height="132" rx="56" fill="var(--robot-ink)"/>
+        <rect x="106" y="176" width="28" height="10" rx="2" fill="var(--bg)"/>
+        <circle cx="120" cy="30" r="24" fill="var(--teal)"/>
+        <circle cx="111" cy="21" r="7" fill="#fff" opacity="0.85"/>
+        <ellipse cx="84" cy="120" rx="25" ry="31" fill="var(--robot-face)"/>
+        <ellipse cx="156" cy="120" rx="25" ry="31" fill="var(--robot-face)"/>
+        <circle cx="79" cy="111" r="8.5" fill="var(--robot-ink)"/>
+        <circle cx="151" cy="111" r="8.5" fill="var(--robot-ink)"/>
+      </svg>
+      <span>OcHub</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#capabilities">Capabilities</a>
+      <a href="#relay">Relay</a>
+      <a href="#native">Native</a>
+      <a href="#download">Download</a>
+      <a href="https://docs.ochub.org/overview">Docs</a>
+    </nav>
+    <div class="nav-right">
+      <button class="locale-chip" type="button" aria-label="Language">
+        EN
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Theme: auto" title="Theme: auto">
+        <svg id="themeIconAuto" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 3.5a8.5 8.5 0 010 17z" fill="currentColor"/></svg>
+        <svg id="themeIconSun" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.7"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5 5l1.7 1.7M17.3 17.3L19 19M19 5l-1.7 1.7M6.7 17.3L5 19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:none"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/OcHub-team/OcHub" aria-label="GitHub repository" title="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 015.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.73.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12 0 1.53-.01 2.76-.01 3.14 0 .3.2.66.8.55A11.51 11.51 0 0023.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+      </a>
+      <a class="btn btn-primary btn-small" href="#download">Download</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="version-pill rise" style="--d:.0s"><span class="dot"></span><b>v0.2.3</b>&nbsp;· pre-release</div>
+      <h1 class="rise" style="--d:.07s">One hub for every <em>AI&nbsp;coding&nbsp;tool</em> you run.</h1>
+      <p class="hero-sub rise" style="--d:.14s">
+        Switch API providers in one click, share MCP servers and skills across
+        clients, and relay traffic through your own local gateway — from a fast
+        native app. No browser shell, no webview.
+      </p>
+      <div class="hero-cta rise" style="--d:.21s">
+        <a class="btn btn-primary" href="#download" id="osCta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="osCtaLabel">Download for macOS</span>
+        </a>
+        <div class="brew-chip">
+          <code>$ brew install --cask ochub-team/tap/ochub</code>
+          <button class="copy-btn" type="button" data-copy="brew install --cask ochub-team/tap/ochub" aria-label="Copy Homebrew command">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M5 15V6a2 2 0 012-2h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <p class="hero-note rise" style="--d:.28s">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.9L2.6 17a2 2 0 001.7 3h15.4a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Pre-release software — back up your tool configs before the first run.
+      </p>
+    </div>
+
+    <div class="hero-visual rise" style="--d:.18s">
+      <!-- mascot with eyes that follow the cursor -->
+      <div class="mascot" id="mascot" aria-hidden="true">
+        <svg viewBox="0 0 240 214">
+          <rect x="24" y="52" width="192" height="132" rx="56" fill="var(--robot-ink)"/>
+          <rect x="106" y="176" width="28" height="10" rx="2" fill="var(--bg)"/>
+          <circle cx="120" cy="30" r="24" fill="var(--teal)"/>
+          <circle cx="111" cy="21" r="7" fill="#fff" opacity="0.85"/>
+          <ellipse cx="84" cy="120" rx="25" ry="31" fill="var(--robot-face)"/>
+          <ellipse cx="156" cy="120" rx="25" ry="31" fill="var(--robot-face)"/>
+          <g id="pupils">
+            <circle cx="79" cy="111" r="8.5" fill="var(--robot-ink)"/>
+            <circle cx="151" cy="111" r="8.5" fill="var(--robot-ink)"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- CSS replica of the shipped GPUI app -->
+      <div class="appwin" role="img" aria-label="The OcHub app window: Claude Code's connection list with an active relay">
+        <div class="appwin-titlebar">
+          <span class="tl r"></span><span class="tl y"></span><span class="tl g"></span>
+          <span class="t">OcHub</span>
+        </div>
+        <div class="appwin-body">
+          <div class="appwin-side">
+            <div class="side-group">
+              <div class="side-label">Apps</div>
+              <div class="side-row active"><span class="sd"></span>Claude Code</div>
+              <div class="side-row"><span class="sd"></span>Claude Desktop</div>
+              <div class="side-row"><span class="sd"></span>Codex</div>
+              <div class="side-row"><span class="sd"></span>OpenCode</div>
+              <div class="side-row"><span class="sd"></span>OpenClaw</div>
+              <div class="side-row"><span class="sd"></span>Hermes</div>
+            </div>
+            <div class="side-group">
+              <div class="side-label">Network</div>
+              <div class="side-row"><span class="sd"></span>Relay</div>
+            </div>
+            <div class="side-group">
+              <div class="side-label">System</div>
+              <div class="side-row"><span class="sd"></span>Usage</div>
+              <div class="side-row"><span class="sd"></span>Settings</div>
+            </div>
+          </div>
+          <div class="appwin-main">
+            <div class="crumb">Apps<b>Claude Code</b></div>
+            <div class="conn-hero">
+              <span class="live"></span>
+              <div>
+                <div class="n">Team relay <span class="badge cur">Current</span></div>
+                <div class="u">127.0.0.1 · default model claude-sonnet-4-5</div>
+              </div>
+              <div class="seg"><span>Direct</span><span class="on">Relay</span></div>
+            </div>
+            <div class="list-label">Direct connections</div>
+            <div class="conn-row">
+              <span class="grip">⋮⋮</span>
+              <div><div class="n">Anthropic · Pro</div><div class="u">api.anthropic.com</div></div>
+              <span class="badge dir">Direct</span>
+              <span class="sw">Switch</span>
+            </div>
+            <div class="conn-row">
+              <span class="grip">⋮⋮</span>
+              <div><div class="n">OpenAI · GPT-5.5</div><div class="u">api.openai.com</div></div>
+              <span class="badge dir">Direct</span>
+              <span class="sw">Switch</span>
+            </div>
+            <div class="conn-row relay">
+              <span class="grip">⋮⋮</span>
+              <div><div class="n">Team relay</div><div class="u">3 model mappings · failover on</div></div>
+              <span class="badge rel">Relay mode</span>
+              <span class="sw">Manage</span>
+            </div>
+            <div class="conn-add">+ Add a direct connection</div>
+            <div class="appwin-status">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              All changes saved
+              <span class="v">v0.2.3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TOOLS STRIP ===================== -->
+<section class="tools" aria-label="Supported tools">
+  <div class="wrap tools-inner" data-reveal>
+    <div class="tools-label">Manages</div>
+    <div class="tools-list">
+      <span><i class="tdot"></i>Claude Code</span>
+      <span><i class="tdot"></i>Claude Desktop</span>
+      <span><i class="tdot"></i>Codex</span>
+      <span><i class="tdot"></i>OpenCode</span>
+      <span><i class="tdot"></i>OpenClaw</span>
+      <span><i class="tdot"></i>Hermes</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CAPABILITIES ===================== -->
+<section class="section" id="capabilities">
+  <div class="wrap cap-grid">
+    <div class="cap-head" data-reveal>
+      <div class="eyebrow">Capabilities</div>
+      <h2>Everything between you and six CLIs.</h2>
+      <p>OcHub reads and writes each tool's live config directly, and keeps its
+        own data in <code>~/.ochub/</code> on this machine. Nothing leaves localhost.</p>
+    </div>
+    <div class="cap-list">
+      <div class="cap-item" data-reveal style="--d:.0s">
+        <div class="cap-num">01</div>
+        <div>
+          <h3>Providers, one switch away</h3>
+          <p>Connections already in a tool's config are picked up automatically.
+            Edit, test, drag to reorder, then switch with one click — the change
+            lands in the tool's own files, immediately.</p>
+          <div class="cap-chips">
+            <span class="chip">auto-discover</span><span class="chip">import</span>
+            <span class="chip">latency test</span><span class="chip">drag to reorder</span>
+          </div>
+        </div>
+      </div>
+      <div class="cap-item" data-reveal style="--d:.06s">
+        <div class="cap-num">02</div>
+        <div>
+          <h3>A relay station on localhost</h3>
+          <p>Point supported clients at the built-in gateway and swap upstreams
+            without touching app configs again. Aliases, failover, and health
+            checks included.</p>
+          <div class="cap-chips">
+            <span class="chip">model aliases</span><span class="chip">failover</span>
+            <span class="chip">health checks</span><span class="chip">usage accounting</span>
+          </div>
+        </div>
+      </div>
+      <div class="cap-item" data-reveal style="--d:.12s">
+        <div class="cap-num">03</div>
+        <div>
+          <h3>MCP servers &amp; skills, written once</h3>
+          <p>Manage MCP servers and reusable skills centrally, then apply them to
+            any managed client — no more copying JSON between six config files.</p>
+          <div class="cap-chips">
+            <span class="chip">shared servers</span><span class="chip">reusable skills</span>
+            <span class="chip">per-tool apply</span>
+          </div>
+        </div>
+      </div>
+      <div class="cap-item" data-reveal style="--d:.18s">
+        <div class="cap-num">04</div>
+        <div>
+          <h3>See what your agents did</h3>
+          <p>Browse sessions across tools, inspect usage and cost per provider,
+            sync settings, and theme the app itself — operations live here too.</p>
+          <div class="cap-chips">
+            <span class="chip">sessions</span><span class="chip">usage &amp; cost</span>
+            <span class="chip">sync</span><span class="chip">themes</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RELAY ===================== -->
+<section class="section relay" id="relay">
+  <div class="wrap relay-grid">
+    <div class="relay-copy" data-reveal>
+      <div class="eyebrow">Relay station</div>
+      <h2>Put localhost between your clients and the clouds.</h2>
+      <p>A relay applies once per client. After that, switching models or
+        upstreams happens inside OcHub and takes effect immediately — the
+        client config is never rewritten again.</p>
+      <div class="relay-feats">
+        <div class="relay-feat">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 8h10m0 0l-3-3m3 3l-3 3M17 16H7m0 0l3 3m-3-3l3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div><b>Model aliases &amp; reasoning mapping</b><span>Call every model by one name; map reasoning effort per upstream dialect.</span></div>
+        </div>
+        <div class="relay-feat">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.5 12l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div><b>Failover with health checks</b><span>Unhealthy upstreams step aside automatically; traffic keeps flowing.</span></div>
+        </div>
+        <div class="relay-feat">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V10m5.5 9V5M15 19v-8m5 8V8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <div><b>Usage accounting built in</b><span>Every relayed request is metered, per provider and per model.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div data-reveal style="--d:.12s">
+      <div class="diagram">
+        <svg viewBox="0 0 560 330" role="img" aria-label="Diagram: Claude Code, Codex and OpenCode connect to the OcHub relay on localhost, which forwards to Anthropic, OpenAI and Gemini">
+          <!-- left clients -->
+          <g font-family="var(--font-body)" font-size="13" font-weight="500">
+            <rect x="8" y="42" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"/>
+            <text x="72" y="68" text-anchor="middle" fill="var(--text)">Claude Code</text>
+            <rect x="8" y="144" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"/>
+            <text x="72" y="170" text-anchor="middle" fill="var(--text)">Codex</text>
+            <rect x="8" y="246" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"/>
+            <text x="72" y="272" text-anchor="middle" fill="var(--text)">OpenCode</text>
+          </g>
+          <!-- right upstreams -->
+          <g font-family="var(--font-body)" font-size="13" font-weight="500">
+            <rect x="424" y="42" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"/>
+            <text x="488" y="68" text-anchor="middle" fill="var(--text)">Anthropic</text>
+            <rect x="424" y="144" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"/>
+            <text x="488" y="170" text-anchor="middle" fill="var(--text)">OpenAI</text>
+            <rect x="424" y="246" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"/>
+            <text x="488" y="272" text-anchor="middle" fill="var(--text)">Gemini</text>
+          </g>
+          <!-- flows in -->
+          <path class="flow-line" d="M136 63 C 190 63, 190 165, 244 165" fill="none" stroke="var(--teal)" stroke-width="1.8"/>
+          <path class="flow-line" d="M136 165 L 244 165" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+          <path class="flow-line" d="M136 267 C 190 267, 190 165, 244 165" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+          <!-- flows out -->
+          <path class="flow-line" d="M356 165 C 390 165, 390 63, 424 63" fill="none" stroke="var(--teal)" stroke-width="1.8"/>
+          <path class="flow-line" d="M356 165 L 424 165" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+          <path class="flow-line" d="M356 165 C 390 165, 390 267, 424 267" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+          <!-- gateway -->
+          <rect x="244" y="128" width="112" height="74" rx="14" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.6"/>
+          <text x="300" y="160" text-anchor="middle" font-family="var(--font-display)" font-weight="600" font-size="14" fill="var(--text)">OcHub</text>
+          <text x="300" y="180" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--teal-ink)">127.0.0.1</text>
+          <!-- labels -->
+          <text x="190" y="40" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--muted)">your clients</text>
+          <text x="390" y="40" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--muted)">upstreams</text>
+          <text x="190" y="305" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--muted)">apply once</text>
+          <text x="390" y="305" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--muted)">alias · failover · meter</text>
+        </svg>
+        <div class="diagram-cap">
+          <span>model aliases</span><span>reasoning mapping</span><span>failover</span><span>health checks</span><span>usage accounting</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== NATIVE BAND ===================== -->
+<section class="section band" id="native">
+  <div class="wrap">
+    <div class="eyebrow" data-reveal>Under the hood</div>
+    <h2 data-reveal style="--d:.05s">Native to the metal.<br>No <em>webview</em> anywhere.</h2>
+    <p class="band-lede" data-reveal style="--d:.1s">
+      OcHub is written in Rust on GPUI, the GPU-accelerated UI framework behind
+      Zed. The control API and relay run in-process on axum; state lives in
+      SQLite. It starts instantly and idles at almost nothing.</p>
+    <div class="band-cols">
+      <div class="band-col" data-reveal style="--d:.0s">
+        <div class="k">Interface</div>
+        <div class="v">GPUI</div>
+        <div class="d">Metal shaders on macOS; Wayland and X11 on Linux. The same toolkit Zed ships.</div>
+      </div>
+      <div class="band-col" data-reveal style="--d:.06s">
+        <div class="k">Server</div>
+        <div class="v">axum</div>
+        <div class="d">A loopback control API and the relay gateway, in the same process as the app.</div>
+      </div>
+      <div class="band-col" data-reveal style="--d:.12s">
+        <div class="k">Storage</div>
+        <div class="v">SQLite</div>
+        <div class="d">Providers, relays, sessions and usage — one directory, <span class="mono">~/.ochub/</span>.</div>
+      </div>
+      <div class="band-col" data-reveal style="--d:.18s">
+        <div class="k">Updates</div>
+        <div class="v">Signed</div>
+        <div class="d">Packages verify against a compiled-in key; downgrades are refused. Attestation included.</div>
+      </div>
+    </div>
+    <div class="band-no" data-reveal style="--d:.2s">
+      <span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>No Electron</span>
+      <span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>No webview</span>
+      <span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>No browser shell</span>
+      <span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>GPL-3.0-or-later</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DOWNLOAD ===================== -->
+<section class="section dl" id="download">
+  <div class="wrap">
+    <div class="eyebrow" data-reveal>Download</div>
+    <h2 data-reveal style="--d:.05s">Built on native runners, for every desktop.</h2>
+    <p class="dl-sub" data-reveal style="--d:.1s">Every tag builds on the matching GitHub-hosted runner and
+      ships with <span class="mono">SHA256SUMS</span> and an artifact attestation.</p>
+
+    <div class="dl-grid">
+      <div class="plat-list" data-reveal style="--d:.12s">
+        <div class="plat">
+          <div class="os">macOS<span class="arch">Apple Silicon</span></div>
+          <div class="files"><span class="file-tag">.dmg · arm64</span></div>
+          <a class="btn btn-ghost btn-small get" href="https://github.com/OcHub-team/OcHub/releases/latest">Download</a>
+        </div>
+        <div class="plat">
+          <div class="os">macOS<span class="arch">Intel</span></div>
+          <div class="files"><span class="file-tag">.dmg · x64</span></div>
+          <a class="btn btn-ghost btn-small get" href="https://github.com/OcHub-team/OcHub/releases/latest">Download</a>
+        </div>
+        <div class="plat">
+          <div class="os">Windows<span class="arch">10 / 11 · x64</span></div>
+          <div class="files"><span class="file-tag">.exe · NSIS</span><span class="file-tag">.zip · portable</span></div>
+          <a class="btn btn-ghost btn-small get" href="https://github.com/OcHub-team/OcHub/releases/latest">Download</a>
+        </div>
+        <div class="plat">
+          <div class="os">Linux<span class="arch">x64</span></div>
+          <div class="files"><span class="file-tag">.AppImage</span><span class="file-tag">.deb</span></div>
+          <a class="btn btn-ghost btn-small get" href="https://github.com/OcHub-team/OcHub/releases/latest">Download</a>
+        </div>
+      </div>
+
+      <div class="dl-aside" data-reveal style="--d:.18s">
+        <div class="term-card">
+          <div class="th"><span>Homebrew</span>
+            <button class="copy-btn" type="button" data-copy="brew install --cask ochub-team/tap/ochub" aria-label="Copy Homebrew command">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M5 15V6a2 2 0 012-2h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <pre><span class="p">$</span> brew install --cask ochub-team/tap/ochub
+<span class="c"># picks the Apple Silicon or Intel build for you</span></pre>
+        </div>
+        <div class="term-card">
+          <div class="th"><span>Verify a download</span></div>
+          <pre><span class="p">$</span> sha256sum -c SHA256SUMS --ignore-missing
+<span class="p">$</span> gh attestation verify ./OcHub.dmg \
+    --repo OcHub-team/OcHub</pre>
+        </div>
+        <div class="note-card">
+          <b>First launch on macOS:</b> the app isn't notarized yet, so approve it
+          once under <b>System Settings › Privacy &amp; Security › Open Anyway</b>.
+          In-app updates are never quarantined — it's a one-time step.
+        </div>
+      </div>
+    </div>
+
+    <div class="update-line" data-reveal style="--d:.22s">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 11-2.3-5.6M20 3v4h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>OcHub checks for updates after launch and can install them in place from
+      <b>Settings → About</b>. Signed packages only; a version that isn't newer is
+      refused. The <span class="mono">.deb</span> and portable ZIP stay check-only, so
+      they never fight <span class="mono">apt</span> or your file layout.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MIGRATION ===================== -->
+<section class="migrate">
+  <div class="wrap">
+    <div class="migrate-card" data-reveal>
+      <div>
+        <div class="mq">Coming from cc-switch?</div>
+        <p>A one-time, read-only import brings your providers over. OcHub owns
+          <code>~/.ochub/</code> and never writes back to <code>~/.cc-switch/</code> —
+          quit cc-switch before your first switch.</p>
+      </div>
+      <a class="btn btn-ghost" href="https://docs.ochub.org/overview">Read the migration notes</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <svg viewBox="0 0 240 214" aria-hidden="true">
+          <rect x="24" y="52" width="192" height="132" rx="56" fill="var(--robot-ink)"/>
+          <rect x="106" y="176" width="28" height="10" rx="2" fill="var(--mantle)"/>
+          <circle cx="120" cy="30" r="24" fill="var(--teal)"/>
+          <circle cx="111" cy="21" r="7" fill="#fff" opacity="0.85"/>
+          <ellipse cx="84" cy="120" rx="25" ry="31" fill="var(--robot-face)"/>
+          <ellipse cx="156" cy="120" rx="25" ry="31" fill="var(--robot-face)"/>
+          <circle cx="79" cy="111" r="8.5" fill="var(--robot-ink)"/>
+          <circle cx="151" cy="111" r="8.5" fill="var(--robot-ink)"/>
+        </svg>
+        <p>A native desktop control center for AI coding tools. Switch providers,
+          manage shared capabilities, and run a local relay from one place.</p>
+      </div>
+      <div>
+        <div class="foot-h">Product</div>
+        <div class="foot-links">
+          <a href="https://docs.ochub.org/overview">Overview</a>
+          <a href="https://docs.ochub.org/install">Install</a>
+          <a href="https://docs.ochub.org/architecture">Architecture</a>
+          <a href="https://docs.ochub.org/build-from-source">Build from source</a>
+        </div>
+      </div>
+      <div>
+        <div class="foot-h">Project</div>
+        <div class="foot-links">
+          <a href="https://github.com/OcHub-team/OcHub">GitHub</a>
+          <a href="https://github.com/OcHub-team/OcHub/releases">Releases</a>
+          <a href="https://github.com/OcHub-team/homebrew-tap">Homebrew tap</a>
+          <a href="https://github.com/OcHub-team/OcHub/blob/main/LICENSE">GPL-3.0-or-later</a>
+        </div>
+      </div>
+      <div>
+        <div class="foot-h">Language</div>
+        <div class="foot-locales">
+          <button type="button" class="on">English</button>
+          <button type="button">日本語</button>
+          <button type="button">简体中文</button>
+        </div>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>© 2026 OcHub contributors</span>
+      <span>A from-scratch GPUI + axum rewrite inspired by
+        <a href="https://github.com/farion1231/cc-switch">cc-switch</a>.</span>
+      <span class="r">rust · gpui · axum · sqlite</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- theme: auto / light / dark ---------- */
+  var toggle = document.getElementById("themeToggle");
+  var icons = {
+    auto: document.getElementById("themeIconAuto"),
+    light: document.getElementById("themeIconSun"),
+    dark: document.getElementById("themeIconMoon")
+  };
+  var order = ["auto", "light", "dark"];
+  var mode = "auto";
+
+  function apply(next) {
+    mode = next;
+    if (mode === "auto") {
+      root.removeAttribute("data-theme");
+      localStorage.removeItem("ochub-theme");
+    } else {
+      root.setAttribute("data-theme", mode);
+      localStorage.setItem("ochub-theme", mode);
+    }
+    for (var k in icons) icons[k].style.display = k === mode ? "block" : "none";
+    toggle.setAttribute("aria-label", "Theme: " + mode);
+    toggle.setAttribute("title", "Theme: " + mode);
+  }
+
+  /* ?theme=light|dark wins (useful for screenshots), then storage. */
+  var param = new URLSearchParams(location.search).get("theme");
+  var stored = localStorage.getItem("ochub-theme");
+  apply(param === "light" || param === "dark" ? param
+    : stored === "light" || stored === "dark" ? stored : "auto");
+
+  toggle.addEventListener("click", function () {
+    apply(order[(order.indexOf(mode) + 1) % order.length]);
+  });
+
+  /* ---------- debug: ?debug=1 reports overflowing elements in <title> ---------- */
+  if (new URLSearchParams(location.search).get("debug")) {
+    window.addEventListener("load", function () {
+      var wide = [];
+      document.querySelectorAll("*").forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.width > window.innerWidth + 1) {
+          var cls = el.className && el.className.baseVal === undefined ? String(el.className).split(" ")[0] : "(svg)";
+          wide.push(el.tagName.toLowerCase() + "." + cls + "=" + Math.round(r.width));
+        }
+      });
+      document.title = "vw=" + window.innerWidth + " WIDE: " + wide.slice(0, 10).join(" | ");
+    });
+  }
+
+  /* ---------- OS-aware primary CTA ---------- */
+  var ua = navigator.userAgent || "";
+  var label = document.getElementById("osCtaLabel");
+  if (/Windows/i.test(ua)) label.textContent = "Download for Windows";
+  else if (/Android|Linux/i.test(ua) && !/Mac/i.test(ua)) label.textContent = "Download for Linux";
+
+  /* ---------- copy buttons ---------- */
+  document.querySelectorAll("[data-copy]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var done = function () {
+        btn.style.color = "var(--teal-ink)";
+        setTimeout(function () { btn.style.color = ""; }, 1200);
+      };
+      if (navigator.clipboard) navigator.clipboard.writeText(btn.dataset.copy).then(done, done);
+      else done();
+    });
+  });
+
+  /* ---------- design-review helper: ?only=<section-id> isolates one
+     section and forces all reveals visible (screenshots, QA). ---------- */
+  var only = new URLSearchParams(location.search).get("only");
+  if (only) {
+    document.querySelectorAll("main > section").forEach(function (s) {
+      if (s.id !== only) s.style.display = "none";
+    });
+    document.querySelectorAll(".nav-links, .hero .version-pill").forEach(function (n) {
+      n.style.visibility = "hidden";
+    });
+  }
+
+  /* ---------- scroll reveals ---------- */
+  var revealEls = document.querySelectorAll("[data-reveal]");
+  if (only) {
+    revealEls.forEach(function (el) { el.classList.add("in"); });
+  } else if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add("in"); });
+  }
+
+  /* ---------- mascot pupils follow the cursor ---------- */
+  var mascot = document.getElementById("mascot");
+  var pupils = document.getElementById("pupils");
+  if (mascot && pupils && !reduceMotion && matchMedia("(pointer: fine)").matches) {
+    var tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+    function tick() {
+      cx += (tx - cx) * 0.14; cy += (ty - cy) * 0.14;
+      pupils.setAttribute("transform", "translate(" + cx.toFixed(2) + " " + cy.toFixed(2) + ")");
+      if (Math.abs(tx - cx) > 0.05 || Math.abs(ty - cy) > 0.05) raf = requestAnimationFrame(tick);
+      else raf = null;
+    }
+    window.addEventListener("pointermove", function (e) {
+      var r = mascot.getBoundingClientRect();
+      var mx = r.left + r.width / 2, my = r.top + r.height / 2;
+      var dx = e.clientX - mx, dy = e.clientY - my;
+      var len = Math.hypot(dx, dy) || 1;
+      var max = 5.5;
+      tx = Math.max(-max, Math.min(max, dx / len * Math.min(max, len / 60)));
+      ty = Math.max(-max, Math.min(max, dy / len * Math.min(max, len / 60)));
+      if (!raf) raf = requestAnimationFrame(tick);
+    }, { passive: true });
+  }
+})();
+</script>
+</body>
+</html>
