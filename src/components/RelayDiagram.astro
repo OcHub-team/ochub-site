@@ -1,0 +1,60 @@
+---
+import { DIAGRAM_CAPTIONS } from "@/data/site";
+---
+
+<div class="diagram">
+  <svg viewBox="0 0 560 330" role="img" aria-label="Diagram: Claude Code, Codex and OpenCode connect to the OcHub relay on localhost, which forwards to Anthropic, OpenAI and Gemini">
+    <!-- left clients -->
+    <g font-family="var(--font-body)" font-size="13" font-weight="500">
+      <rect x="8" y="42" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"></rect>
+      <text x="72" y="68" text-anchor="middle" fill="var(--text)">Claude Code</text>
+      <rect x="8" y="144" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"></rect>
+      <text x="72" y="170" text-anchor="middle" fill="var(--text)">Codex</text>
+      <rect x="8" y="246" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"></rect>
+      <text x="72" y="272" text-anchor="middle" fill="var(--text)">OpenCode</text>
+    </g>
+    <!-- right upstreams -->
+    <g font-family="var(--font-body)" font-size="13" font-weight="500">
+      <rect x="424" y="42" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"></rect>
+      <text x="488" y="68" text-anchor="middle" fill="var(--text)">Anthropic</text>
+      <rect x="424" y="144" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"></rect>
+      <text x="488" y="170" text-anchor="middle" fill="var(--text)">OpenAI</text>
+      <rect x="424" y="246" width="128" height="42" rx="10" fill="var(--panel)" stroke="var(--border-strong)"></rect>
+      <text x="488" y="272" text-anchor="middle" fill="var(--text)">Gemini</text>
+    </g>
+    <!-- flows in -->
+    <path class="flow-line" d="M136 63 C 190 63, 190 165, 244 165" fill="none" stroke="var(--teal)" stroke-width="1.8"></path>
+    <path class="flow-line" d="M136 165 L 244 165" fill="none" stroke="var(--border-strong)" stroke-width="1.5"></path>
+    <path class="flow-line" d="M136 267 C 190 267, 190 165, 244 165" fill="none" stroke="var(--border-strong)" stroke-width="1.5"></path>
+    <!-- flows out -->
+    <path class="flow-line" d="M356 165 C 390 165, 390 63, 424 63" fill="none" stroke="var(--teal)" stroke-width="1.8"></path>
+    <path class="flow-line" d="M356 165 L 424 165" fill="none" stroke="var(--border-strong)" stroke-width="1.5"></path>
+    <path class="flow-line" d="M356 165 C 390 165, 390 267, 424 267" fill="none" stroke="var(--border-strong)" stroke-width="1.5"></path>
+    <!-- gateway -->
+    <rect x="244" y="128" width="112" height="74" rx="14" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.6"></rect>
+    <text x="300" y="160" text-anchor="middle" font-family="var(--font-display)" font-weight="600" font-size="14" fill="var(--text)">OcHub</text>
+    <text x="300" y="180" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--teal-ink)">127.0.0.1</text>
+    <!-- labels -->
+    <text x="190" y="40" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--muted)">your clients</text>
+    <text x="390" y="40" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--muted)">upstreams</text>
+    <text x="190" y="305" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--muted)">apply once</text>
+    <text x="390" y="305" text-anchor="middle" font-family="var(--font-mono)" font-size="10.5" fill="var(--muted)">alias · failover · meter</text>
+  </svg>
+  <div class="diagram-cap">
+    {DIAGRAM_CAPTIONS.map((cap) => <span>{cap}</span>)}
+  </div>
+</div>
+
+<style>
+  .diagram {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: clamp(18px, 3vw, 32px);
+    box-shadow: 0 24px 60px -32px color-mix(in oklch, var(--text) 25%, transparent);
+  }
+  .diagram svg { display: block; width: 100%; height: auto; }
+  .diagram-cap {
+    margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border);
+    font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted);
+    display: flex; flex-wrap: wrap; gap: 6px 16px;
+  }
+</style>

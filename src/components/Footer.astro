@@ -1,0 +1,101 @@
+---
+import Mascot from "./Mascot.astro";
+import { LINKS } from "@/data/site";
+
+const PRODUCT_LINKS = [
+  { label: "Overview", href: LINKS.docs.overview },
+  { label: "Install", href: LINKS.docs.install },
+  { label: "Architecture", href: LINKS.docs.architecture },
+  { label: "Build from source", href: LINKS.docs.buildFromSource },
+];
+
+const PROJECT_LINKS = [
+  { label: "GitHub", href: LINKS.repo },
+  { label: "Releases", href: LINKS.allReleases },
+  { label: "Homebrew tap", href: LINKS.brewTap },
+  { label: "GPL-3.0-or-later", href: LINKS.license },
+];
+
+const LOCALES = [
+  { label: "English", active: true },
+  { label: "日本語", active: false },
+  { label: "简体中文", active: false },
+];
+---
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <Mascot class="foot-mascot" notch="var(--mantle)" />
+        <p>
+          A native desktop control center for AI coding tools. Switch providers,
+          manage shared capabilities, and run a local relay from one place.
+        </p>
+      </div>
+      <div>
+        <div class="foot-h">Product</div>
+        <div class="foot-links">
+          {PRODUCT_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
+        </div>
+      </div>
+      <div>
+        <div class="foot-h">Project</div>
+        <div class="foot-links">
+          {PROJECT_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
+        </div>
+      </div>
+      <div>
+        <div class="foot-h">Language</div>
+        <div class="foot-locales">
+          {LOCALES.map((l) => <button type="button" class:list={{ on: l.active }}>{l.label}</button>)}
+        </div>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>© 2026 OcHub contributors</span>
+      <span>
+        A from-scratch GPUI + axum rewrite inspired by
+        <a href={LINKS.ccSwitch}>cc-switch</a>.
+      </span>
+      <span class="r">rust · gpui · axum · sqlite</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer { border-top: 1px solid var(--border); background: var(--mantle); }
+  .foot-grid {
+    padding: clamp(44px, 6vh, 64px) 0 34px;
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 2.5fr) minmax(0, 2.5fr) minmax(0, 2fr);
+    gap: clamp(28px, 4vw, 56px);
+  }
+  /* Mascot renders through the child component — scoped styles need :global. */
+  .foot-brand :global(svg) { width: 38px; height: auto; display: block; }
+  .foot-brand p { margin-top: 14px; color: var(--subtext); font-size: 0.9rem; max-width: 36ch; }
+  .foot-h { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  .foot-links { display: flex; flex-direction: column; gap: 9px; }
+  .foot-links a { color: var(--subtext); text-decoration: none; font-size: 0.93rem; }
+  .foot-links a:hover { color: var(--text); }
+  .foot-locales { display: flex; flex-direction: column; gap: 9px; }
+  .foot-locales button {
+    background: none; border: none; padding: 0; cursor: pointer;
+    color: var(--subtext); font-size: 0.93rem; text-align: left; font-family: var(--font-body);
+  }
+  .foot-locales button.on { color: var(--teal-ink); font-weight: 500; }
+  .foot-locales button:hover { color: var(--text); }
+  .foot-base {
+    border-top: 1px solid var(--border); padding: 20px 0 26px;
+    display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+    color: var(--muted); font-size: 0.84rem;
+  }
+  .foot-base a { color: var(--muted); }
+  .foot-base .r { margin-left: auto; font-family: var(--font-mono); font-size: 0.78rem; }
+
+  @media (max-width: 1020px) {
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .foot-grid { grid-template-columns: 1fr; }
+  }
+</style>

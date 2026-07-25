@@ -1,0 +1,131 @@
+---
+import { BREW_COMMAND, LINKS, PLATFORMS } from "@/data/site";
+---
+
+<section class="section dl" id="download">
+  <div class="wrap">
+    <div class="eyebrow" data-reveal>Download</div>
+    <h2 data-reveal style="--d:.05s">Built on native runners, for every desktop.</h2>
+    <p class="dl-sub" data-reveal style="--d:.1s">
+      Every tag builds on the matching GitHub-hosted runner and ships with
+      <span class="mono">SHA256SUMS</span> and an artifact attestation.
+    </p>
+
+    <div class="dl-grid">
+      <div class="plat-list" data-reveal style="--d:.12s">
+        {
+          PLATFORMS.map((plat) => (
+            <div class="plat">
+              <div class="os">
+                {plat.os}
+                <span class="arch">{plat.arch}</span>
+              </div>
+              <div class="files">
+                {plat.files.map((f) => <span class="file-tag">{f}</span>)}
+              </div>
+              <a class="btn btn-ghost btn-small get" href={LINKS.releases}>Download</a>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="dl-aside" data-reveal style="--d:.18s">
+        <div class="term-card">
+          <div class="th">
+            <span>Homebrew</span>
+            <button class="copy-btn" type="button" data-copy={BREW_COMMAND} aria-label="Copy Homebrew command">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"
+                ><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.7"></rect><path d="M5 15V6a2 2 0 012-2h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg
+              >
+            </button>
+          </div>
+          <pre><span class="p">$</span> {BREW_COMMAND}
+<span class="c"># picks the Apple Silicon or Intel build for you</span></pre>
+        </div>
+        <div class="term-card">
+          <div class="th"><span>Verify a download</span></div>
+          <pre><span class="p">$</span> sha256sum -c SHA256SUMS --ignore-missing
+<span class="p">$</span> gh attestation verify ./OcHub.dmg \
+    --repo OcHub-team/OcHub</pre>
+        </div>
+        <div class="note-card">
+          <b>First launch on macOS:</b> the app isn't notarized yet, so approve it
+          once under <b>System Settings › Privacy &amp; Security › Open Anyway</b>.
+          In-app updates are never quarantined — it's a one-time step.
+        </div>
+      </div>
+    </div>
+
+    <div class="update-line" data-reveal style="--d:.22s">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"
+        ><path d="M20 12a8 8 0 11-2.3-5.6M20 3v4h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg
+      >
+      <span>
+        OcHub checks for updates after launch and can install them in place from
+        <b>Settings → About</b>. Signed packages only; a version that isn't newer is
+        refused. The <span class="mono">.deb</span> and portable ZIP stay check-only, so
+        they never fight <span class="mono">apt</span> or your file layout.
+      </span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .dl-grid {
+    display: grid; grid-template-columns: minmax(0, 6.4fr) minmax(0, 4.6fr);
+    gap: clamp(32px, 5vw, 72px);
+    margin-top: 8px;
+  }
+  .dl h2 { font-size: clamp(1.9rem, 3.2vw, 2.7rem); margin-top: 18px; }
+  .dl-sub { margin-top: 14px; color: var(--subtext); max-width: 52ch; }
+  .plat-list { margin-top: 34px; border-top: 1px solid var(--border); }
+  .plat {
+    display: grid; grid-template-columns: 1fr auto; gap: 6px 18px;
+    align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border);
+  }
+  .plat .os { font-weight: 600; font-size: 1.06rem; font-family: var(--font-display); letter-spacing: -0.01em; }
+  .plat .arch { font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); margin-left: 10px; font-weight: 400; }
+  .plat .files { display: flex; gap: 6px; flex-wrap: wrap; grid-column: 1; }
+  .plat .get { grid-row: 1 / span 2; grid-column: 2; align-self: center; }
+  .file-tag {
+    font-family: var(--font-mono); font-size: 0.74rem;
+    border: 1px solid var(--border); background: var(--panel);
+    color: var(--subtext); border-radius: 6px; padding: 2.5px 9px;
+  }
+  .dl-aside { display: flex; flex-direction: column; gap: 22px; margin-top: 34px; }
+  .term-card {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--panel); overflow: hidden;
+  }
+  .term-card .th {
+    padding: 10px 16px; border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .term-card pre {
+    padding: 14px 16px; font-size: 0.8rem; line-height: 1.7;
+    overflow-x: auto; color: var(--text);
+  }
+  .term-card pre .c { color: var(--muted); }
+  .term-card pre .p { color: var(--teal-ink); user-select: none; }
+  .note-card {
+    border: 1px solid var(--border); border-left: 3px solid var(--teal);
+    border-radius: 10px; padding: 14px 16px; background: var(--surface);
+    font-size: 0.9rem; color: var(--subtext);
+  }
+  .note-card b { color: var(--text); }
+  .update-line {
+    margin-top: 30px; display: flex; gap: 10px; align-items: flex-start;
+    color: var(--subtext); font-size: 0.92rem; max-width: 64ch;
+  }
+  .update-line svg { width: 16px; height: 16px; color: var(--teal-ink); flex: none; margin-top: 3px; }
+
+  @media (max-width: 1020px) {
+    .dl-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .plat { grid-template-columns: 1fr; }
+    .plat .get { grid-row: auto; grid-column: 1; justify-self: start; margin-top: 6px; }
+  }
+</style>

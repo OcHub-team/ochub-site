@@ -1,0 +1,92 @@
+---
+import { BAND_FACTS } from "@/data/site";
+---
+
+<section class="section band" id="native">
+  <div class="wrap">
+    <div class="eyebrow" data-reveal>Under the hood</div>
+    <h2 data-reveal style="--d:.05s">
+      Native to the metal.<br />No <em>webview</em> anywhere.
+    </h2>
+    <p class="band-lede" data-reveal style="--d:.1s">
+      OcHub is written in Rust on GPUI, the GPU-accelerated UI framework behind
+      Zed. The control API and relay run in-process on axum; state lives in
+      SQLite. It starts instantly and idles at almost nothing.
+    </p>
+    <div class="band-cols">
+      {
+        BAND_FACTS.map((fact, i) => (
+          <div class="band-col" data-reveal style={`--d:${(i * 0.06).toFixed(2)}s`}>
+            <div class="k">{fact.k}</div>
+            <div class="v">{fact.v}</div>
+            <div class="d">{fact.d}</div>
+          </div>
+        ))
+      }
+    </div>
+    <div class="band-no" data-reveal style="--d:.2s">
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        No Electron
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        No webview
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        No browser shell
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        GPL-3.0-or-later
+      </span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .band {
+    background: var(--band-bg); color: var(--band-text);
+    position: relative; overflow: clip;
+  }
+  .band::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: linear-gradient(to right, color-mix(in oklch, var(--teal) 6%, transparent) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: linear-gradient(to bottom, black, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black, transparent 80%);
+  }
+  .band .wrap { position: relative; }
+  .band .eyebrow { color: var(--teal); }
+  .band h2 { font-size: clamp(2rem, 3.6vw, 3rem); line-height: 1.08; margin-top: 18px; max-width: 18ch; }
+  .band h2 em { font-style: normal; color: var(--teal); }
+  .band-lede { margin-top: 18px; color: var(--band-sub); max-width: 58ch; font-size: 1.08rem; }
+  .band-cols {
+    margin-top: clamp(36px, 5vh, 56px);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--band-line);
+  }
+  .band-col { padding: 22px 22px 0 0; }
+  .band-col + .band-col { border-left: 1px solid var(--band-line); padding-left: 22px; }
+  .band-col .k { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); }
+  .band-col .v { margin-top: 8px; font-weight: 600; font-size: 1.02rem; font-family: var(--font-display); }
+  .band-col .d { margin-top: 6px; color: var(--band-sub); font-size: 0.9rem; line-height: 1.55; }
+  .band-no {
+    margin-top: clamp(36px, 5vh, 52px); padding-top: 22px;
+    border-top: 1px solid var(--band-line);
+    display: flex; gap: clamp(18px, 3vw, 40px); flex-wrap: wrap;
+    font-family: var(--font-mono); font-size: 0.85rem; color: var(--band-sub);
+  }
+  .band-no span { display: inline-flex; align-items: center; gap: 9px; }
+  .band-no svg { width: 15px; height: 15px; color: var(--teal); }
+
+  @media (max-width: 1020px) {
+    .band-cols { grid-template-columns: 1fr 1fr; row-gap: 26px; }
+    .band-col:nth-child(3) { border-left: none; padding-left: 0; }
+  }
+  @media (max-width: 640px) {
+    .band-cols { grid-template-columns: 1fr; }
+    .band-col + .band-col { border-left: none; padding-left: 0; }
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+import RelayDiagram from "./RelayDiagram.astro";
+import { RELAY_FEATURES } from "@/data/site";
+
+const ICONS: Record<string, string> = {
+  swap: '<path d="M7 8h10m0 0l-3-3m3 3l-3 3M17 16H7m0 0l3 3m-3-3l3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  shield:
+    '<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.5 12l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  chart: '<path d="M4 19V10m5.5 9V5M15 19v-8m5 8V8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+};
+---
+
+<section class="section relay" id="relay">
+  <div class="wrap relay-grid">
+    <div class="relay-copy" data-reveal>
+      <div class="eyebrow">Relay station</div>
+      <h2>Put localhost between your clients and the clouds.</h2>
+      <p>
+        A relay applies once per client. After that, switching models or
+        upstreams happens inside OcHub and takes effect immediately — the
+        client config is never rewritten again.
+      </p>
+      <div class="relay-feats">
+        {
+          RELAY_FEATURES.map((feat) => (
+            <div class="relay-feat">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" set:html={ICONS[feat.icon]} />
+              <div>
+                <b>{feat.title}</b>
+                <span>{feat.body}</span>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <div data-reveal style="--d:.12s">
+      <RelayDiagram />
+    </div>
+  </div>
+</section>
+
+<style>
+  .relay { background: var(--mantle); border-block: 1px solid var(--border); }
+  .relay-grid {
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: clamp(36px, 5vw, 80px); align-items: center;
+  }
+  .relay h2 { font-size: clamp(1.9rem, 3.2vw, 2.7rem); line-height: 1.12; margin-top: 18px; max-width: 16ch; }
+  .relay-copy > p { margin-top: 16px; color: var(--subtext); max-width: 46ch; }
+  .relay-feats { margin-top: 26px; display: flex; flex-direction: column; }
+  .relay-feat {
+    display: flex; gap: 14px; padding: 13px 0; border-top: 1px solid var(--border);
+  }
+  .relay-feat:last-child { border-bottom: 1px solid var(--border); }
+  .relay-feat svg { width: 17px; height: 17px; color: var(--teal-ink); flex: none; margin-top: 3px; }
+  .relay-feat b { font-weight: 600; font-size: 0.98rem; display: block; }
+  .relay-feat span { color: var(--subtext); font-size: 0.93rem; }
+
+  @media (max-width: 1020px) {
+    .relay-grid { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,33 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Nav from "@/components/Nav.astro";
+import Hero from "@/components/Hero.astro";
+import ToolsStrip from "@/components/ToolsStrip.astro";
+import Capabilities from "@/components/Capabilities.astro";
+import Relay from "@/components/Relay.astro";
+import NativeBand from "@/components/NativeBand.astro";
+import Download from "@/components/Download.astro";
+import Migrate from "@/components/Migrate.astro";
+import Footer from "@/components/Footer.astro";
+---
+
+<BaseLayout
+  title="OcHub — One hub for every AI coding tool"
+  description="A native desktop control center for AI coding tools. Switch providers, manage shared capabilities, and run a local relay from one place."
+>
+  <Nav />
+  <main id="main">
+    <Hero />
+    <ToolsStrip />
+    <Capabilities />
+    <Relay />
+    <NativeBand />
+    <Download />
+    <Migrate />
+  </main>
+  <Footer />
+</BaseLayout>
+
+<script>
+  import "@/scripts/site";
+</script>

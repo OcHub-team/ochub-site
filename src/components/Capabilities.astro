@@ -1,0 +1,60 @@
+---
+import { CAPABILITIES } from "@/data/site";
+---
+
+<section class="section" id="capabilities">
+  <div class="wrap cap-grid">
+    <div class="cap-head" data-reveal>
+      <div class="eyebrow">Capabilities</div>
+      <h2>Everything between you and six CLIs.</h2>
+      <p>
+        OcHub reads and writes each tool's live config directly, and keeps its
+        own data in <code>~/.ochub/</code> on this machine. Nothing leaves localhost.
+      </p>
+    </div>
+    <div class="cap-list">
+      {
+        CAPABILITIES.map((cap, i) => (
+          <div class="cap-item" data-reveal style={`--d:${(i * 0.06).toFixed(2)}s`}>
+            <div class="cap-num">{cap.num}</div>
+            <div>
+              <h3>{cap.title}</h3>
+              <p>{cap.body}</p>
+              <div class="cap-chips">
+                {cap.chips.map((chip) => <span class="chip">{chip}</span>)}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .cap-grid {
+    display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: clamp(32px, 6vw, 90px);
+  }
+  .cap-head { position: sticky; top: 96px; align-self: start; }
+  .cap-head h2 { font-size: clamp(1.9rem, 3.2vw, 2.7rem); line-height: 1.12; margin-top: 18px; max-width: 12ch; }
+  .cap-head p { margin-top: 16px; color: var(--subtext); max-width: 34ch; }
+  .cap-list { display: flex; flex-direction: column; }
+  .cap-item {
+    display: grid; grid-template-columns: 58px 1fr; gap: 20px;
+    padding: 28px 0; border-top: 1px solid var(--border);
+  }
+  .cap-item:last-child { border-bottom: 1px solid var(--border); }
+  .cap-num {
+    font-family: var(--font-mono); font-size: 0.82rem; color: var(--teal-ink);
+    padding-top: 5px;
+  }
+  .cap-item h3 { font-size: 1.32rem; font-weight: 600; letter-spacing: -0.01em; }
+  .cap-item p { margin-top: 8px; color: var(--subtext); max-width: 56ch; }
+  .cap-chips { margin-top: 13px; display: flex; flex-wrap: wrap; gap: 7px; }
+
+  @media (max-width: 1020px) {
+    .cap-grid { grid-template-columns: 1fr; }
+    .cap-head { position: static; }
+  }
+</style>

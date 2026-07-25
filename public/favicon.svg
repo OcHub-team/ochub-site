@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 214">
+  <style>
+    .ink { fill: #22201a; }
+    .face { fill: #fcfcfb; }
+    @media (prefers-color-scheme: dark) {
+      .ink { fill: #f2f1ec; }
+      .face { fill: #10151a; }
+    }
+  </style>
+  <rect class="ink" x="24" y="52" width="192" height="132" rx="56"/>
+  <circle cx="120" cy="30" r="24" fill="#31b8b5"/>
+  <circle cx="111" cy="21" r="7" fill="#ffffff" opacity="0.85"/>
+  <ellipse class="face" cx="84" cy="120" rx="25" ry="31"/>
+  <ellipse class="face" cx="156" cy="120" rx="25" ry="31"/>
+  <circle class="ink" cx="79" cy="111" r="8.5"/>
+  <circle class="ink" cx="151" cy="111" r="8.5"/>
+</svg>

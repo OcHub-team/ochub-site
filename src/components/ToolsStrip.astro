@@ -1,0 +1,35 @@
+---
+import { MANAGED_TOOLS } from "@/data/site";
+---
+
+<section class="tools" aria-label="Supported tools">
+  <div class="wrap tools-inner" data-reveal>
+    <div class="tools-label">Manages</div>
+    <div class="tools-list">
+      {MANAGED_TOOLS.map((tool) => <span><i class="tdot"></i>{tool}</span>)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .tools { border-block: 1px solid var(--border); background: var(--mantle); }
+  .tools-inner {
+    display: flex; align-items: center; gap: clamp(18px, 3vw, 40px);
+    padding-block: 20px; flex-wrap: wrap;
+  }
+  .tools-label {
+    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); flex: none;
+  }
+  .tools-list {
+    display: flex; gap: clamp(16px, 2.6vw, 34px); flex-wrap: wrap; align-items: center;
+  }
+  .tools-list span {
+    font-family: var(--font-display); font-weight: 500; font-size: 1.02rem;
+    color: var(--subtext); letter-spacing: -0.01em;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: color 0.2s var(--ease-out);
+  }
+  .tools-list span:hover { color: var(--text); }
+  .tools-list .tdot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal); flex: none; }
+</style>

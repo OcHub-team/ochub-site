@@ -1,0 +1,39 @@
+---
+/**
+ * The OcHub robot. Colors come from --robot-ink/--robot-face so it inverts
+ * with the theme, exactly like the brand wordmark's black/white pair.
+ *
+ * - `pupils`: render the pupil group with [data-pupils] so the cursor-follow
+ *   script can find it. Only one mascot per page should set this.
+ * - `notch`: color of the mouth notch — should match the surface behind the
+ *   robot (page bg in the hero/nav, mantle in the footer).
+ */
+interface Props {
+  pupils?: boolean;
+  notch?: string;
+  class?: string;
+}
+const { pupils = false, notch = "var(--bg)", class: className } = Astro.props;
+---
+
+<svg viewBox="0 0 240 214" class={className} aria-hidden="true">
+  <rect x="24" y="52" width="192" height="132" rx="56" fill="var(--robot-ink)"></rect>
+  <rect x="106" y="176" width="28" height="10" rx="2" fill={notch}></rect>
+  <circle cx="120" cy="30" r="24" fill="var(--teal)"></circle>
+  <circle cx="111" cy="21" r="7" fill="#fff" opacity="0.85"></circle>
+  <ellipse cx="84" cy="120" rx="25" ry="31" fill="var(--robot-face)"></ellipse>
+  <ellipse cx="156" cy="120" rx="25" ry="31" fill="var(--robot-face)"></ellipse>
+  {
+    pupils ? (
+      <g data-pupils>
+        <circle cx="79" cy="111" r="8.5" fill="var(--robot-ink)"></circle>
+        <circle cx="151" cy="111" r="8.5" fill="var(--robot-ink)"></circle>
+      </g>
+    ) : (
+      <g>
+        <circle cx="79" cy="111" r="8.5" fill="var(--robot-ink)"></circle>
+        <circle cx="151" cy="111" r="8.5" fill="var(--robot-ink)"></circle>
+      </g>
+    )
+  }
+</svg>

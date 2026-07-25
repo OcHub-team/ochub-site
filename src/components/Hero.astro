@@ -1,0 +1,130 @@
+---
+import Mascot from "./Mascot.astro";
+import AppWindow from "./AppWindow.astro";
+import { BREW_COMMAND, VERSION } from "@/data/site";
+---
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="version-pill rise" style="--d:.0s">
+        <span class="dot"></span><b>v{VERSION}</b>&nbsp;· pre-release
+      </div>
+      <h1 class="rise" style="--d:.07s">
+        One hub for every <em>AI&nbsp;coding&nbsp;tool</em> you run.
+      </h1>
+      <p class="hero-sub rise" style="--d:.14s">
+        Switch API providers in one click, share MCP servers and skills across
+        clients, and relay traffic through your own local gateway — from a fast
+        native app. No browser shell, no webview.
+      </p>
+      <div class="hero-cta rise" style="--d:.21s">
+        <a class="btn btn-primary" href="#download" id="osCta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"
+            ><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg
+          >
+          <span id="osCtaLabel">Download for macOS</span>
+        </a>
+        <div class="brew-chip">
+          <code>$ {BREW_COMMAND}</code>
+          <button class="copy-btn" type="button" data-copy={BREW_COMMAND} aria-label="Copy Homebrew command">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"
+              ><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.7"></rect><path d="M5 15V6a2 2 0 012-2h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg
+            >
+          </button>
+        </div>
+      </div>
+      <p class="hero-note rise" style="--d:.28s">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"
+          ><path d="M12 9v4m0 4h.01M10.3 3.9L2.6 17a2 2 0 001.7 3h15.4a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg
+        >
+        Pre-release software — back up your tool configs before the first run.
+      </p>
+    </div>
+
+    <div class="hero-visual rise" style="--d:.18s">
+      <div class="mascot" id="mascot" aria-hidden="true">
+        <Mascot pupils />
+      </div>
+      <AppWindow />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding: clamp(64px, 9vh, 110px) 0 clamp(56px, 7vh, 90px);
+    overflow: clip;
+  }
+  /* faint engineering grid, tinted toward brand hue, masked away at edges */
+  .hero::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(to right, color-mix(in oklch, var(--teal) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--teal) 7%, transparent) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 90% 75% at 65% 30%, black 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 75% at 65% 30%, black 20%, transparent 75%);
+  }
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 5.2fr) minmax(0, 5.8fr);
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+  .hero-grid > * { min-width: 0; }
+  .version-pill {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--font-mono); font-size: 0.78rem;
+    color: var(--subtext);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 5px 13px 5px 9px; margin-bottom: 26px;
+    background: var(--surface);
+  }
+  .version-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+  .version-pill b { color: var(--text); font-weight: 500; }
+  .hero h1 {
+    font-size: clamp(2.55rem, 4.6vw, 3.9rem);
+    line-height: 1.06;
+    font-weight: 600;
+    max-width: 16.5ch;
+  }
+  .hero h1 em { font-style: normal; color: var(--teal-ink); }
+  .hero-sub {
+    margin-top: 22px; max-width: 46ch;
+    color: var(--subtext); font-size: 1.13rem; line-height: 1.6;
+  }
+  .hero-cta { margin-top: 32px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .hero-cta .btn { padding: 12px 22px; font-size: 1rem; }
+  .brew-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    border: 1px solid var(--border); background: var(--panel);
+    border-radius: 10px; padding: 11px 8px 11px 16px;
+    font-size: 0.86rem; color: var(--subtext);
+    max-width: 100%; overflow-x: auto; scrollbar-width: none;
+  }
+  .brew-chip::-webkit-scrollbar { display: none; }
+  .brew-chip code { font-size: 0.84rem; color: var(--text); white-space: nowrap; }
+  .hero-note {
+    margin-top: 18px; font-size: 0.85rem; color: var(--muted);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .hero-note svg { width: 14px; height: 14px; flex: none; }
+
+  .hero-visual { position: relative; }
+  .mascot {
+    position: absolute; z-index: 3;
+    width: clamp(88px, 9vw, 118px);
+    top: -58px; right: 8%;
+    filter: drop-shadow(0 10px 22px color-mix(in oklch, var(--text) 18%, transparent));
+  }
+  .mascot :global(svg) { display: block; width: 100%; height: auto; }
+
+  @media (max-width: 1020px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-visual { margin-top: 30px; }
+    .mascot { top: -46px; }
+  }
+</style>
