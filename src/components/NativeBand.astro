@@ -1,21 +1,24 @@
 ---
-import { BAND_FACTS } from "@/data/site";
+import type { Strings } from "@/i18n";
+
+interface Props {
+  t: Strings;
+}
+const { t } = Astro.props;
 ---
 
 <section class="section band" id="native">
   <div class="wrap">
-    <div class="eyebrow" data-reveal>Under the hood</div>
+    <div class="eyebrow" data-reveal>{t.band.eyebrow}</div>
     <h2 data-reveal style="--d:.05s">
-      Native to the metal.<br />No <em>webview</em> anywhere.
+      {t.band.h2A}<br />{t.band.h2BLead} <em>{t.band.h2BEm}</em>{t.band.h2BTail}
     </h2>
     <p class="band-lede" data-reveal style="--d:.1s">
-      OcHub is written in Rust on GPUI, the GPU-accelerated UI framework behind
-      Zed. The control API and relay run in-process on axum; state lives in
-      SQLite. It starts instantly and idles at almost nothing.
+      {t.band.lede}
     </p>
     <div class="band-cols">
       {
-        BAND_FACTS.map((fact, i) => (
+        t.band.facts.map((fact, i) => (
           <div class="band-col" data-reveal style={`--d:${(i * 0.06).toFixed(2)}s`}>
             <div class="k">{fact.k}</div>
             <div class="v">{fact.v}</div>
@@ -25,22 +28,20 @@ import { BAND_FACTS } from "@/data/site";
       }
     </div>
     <div class="band-no" data-reveal style="--d:.2s">
-      <span>
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
-        No Electron
-      </span>
-      <span>
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
-        No webview
-      </span>
-      <span>
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
-        No browser shell
-      </span>
-      <span>
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-        GPL-3.0-or-later
-      </span>
+      {
+        t.band.no.map((item, i) => (
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              {i < 3 ? (
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              ) : (
+                <path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              )}
+            </svg>
+            {item}
+          </span>
+        ))
+      }
     </div>
   </div>
 </section>
@@ -59,7 +60,7 @@ import { BAND_FACTS } from "@/data/site";
   }
   .band .wrap { position: relative; }
   .band .eyebrow { color: var(--teal); }
-  .band h2 { font-size: clamp(2rem, 3.6vw, 3rem); line-height: 1.08; margin-top: 18px; max-width: 18ch; }
+  .band h2 { font-size: clamp(2rem, 3.6vw, 3rem); line-height: 1.08; margin-top: 18px; max-width: 20ch; }
   .band h2 em { font-style: normal; color: var(--teal); }
   .band-lede { margin-top: 18px; color: var(--band-sub); max-width: 58ch; font-size: 1.08rem; }
   .band-cols {

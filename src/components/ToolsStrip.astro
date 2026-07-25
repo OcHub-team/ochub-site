@@ -1,10 +1,15 @@
 ---
 import { MANAGED_TOOLS } from "@/data/site";
+
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
 ---
 
 <section class="tools" aria-label="Supported tools">
   <div class="wrap tools-inner" data-reveal>
-    <div class="tools-label">Manages</div>
+    <div class="tools-label">{label}</div>
     <div class="tools-list">
       {MANAGED_TOOLS.map((tool) => <span><i class="tdot"></i>{tool}</span>)}
     </div>

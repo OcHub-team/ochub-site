@@ -1,30 +1,30 @@
 ---
 import RelayDiagram from "./RelayDiagram.astro";
-import { RELAY_FEATURES } from "@/data/site";
+import type { Strings } from "@/i18n";
 
-const ICONS: Record<string, string> = {
-  swap: '<path d="M7 8h10m0 0l-3-3m3 3l-3 3M17 16H7m0 0l3 3m-3-3l3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
-  shield:
-    '<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.5 12l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
-  chart: '<path d="M4 19V10m5.5 9V5M15 19v-8m5 8V8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
-};
+interface Props {
+  t: Strings;
+}
+const { t } = Astro.props;
+
+const ICONS = [
+  '<path d="M7 8h10m0 0l-3-3m3 3l-3 3M17 16H7m0 0l3 3m-3-3l3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  '<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.5 12l2.5 2.5 4.5-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  '<path d="M4 19V10m5.5 9V5M15 19v-8m5 8V8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+];
 ---
 
 <section class="section relay" id="relay">
   <div class="wrap relay-grid">
     <div class="relay-copy" data-reveal>
-      <div class="eyebrow">Relay station</div>
-      <h2>Put localhost between your clients and the clouds.</h2>
-      <p>
-        A relay applies once per client. After that, switching models or
-        upstreams happens inside OcHub and takes effect immediately — the
-        client config is never rewritten again.
-      </p>
+      <div class="eyebrow">{t.relay.eyebrow}</div>
+      <h2>{t.relay.h2}</h2>
+      <p>{t.relay.intro}</p>
       <div class="relay-feats">
         {
-          RELAY_FEATURES.map((feat) => (
+          t.relay.feats.map((feat, i) => (
             <div class="relay-feat">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" set:html={ICONS[feat.icon]} />
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" set:html={ICONS[i]} />
               <div>
                 <b>{feat.title}</b>
                 <span>{feat.body}</span>
@@ -35,7 +35,7 @@ const ICONS: Record<string, string> = {
       </div>
     </div>
     <div data-reveal style="--d:.12s">
-      <RelayDiagram />
+      <RelayDiagram t={t} />
     </div>
   </div>
 </section>

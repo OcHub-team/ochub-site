@@ -20,6 +20,13 @@ function initTheme(): void {
     icons.set(el.dataset.themeIcon as ThemeMode, el);
   });
   const order: ThemeMode[] = ["auto", "light", "dark"];
+  // Localized labels are rendered into data attributes by Nav.astro.
+  const label = toggle.dataset.themeLabel ?? "Theme";
+  const modeNames: Record<ThemeMode, string> = {
+    auto: toggle.dataset.modeAuto ?? "auto",
+    light: toggle.dataset.modeLight ?? "light",
+    dark: toggle.dataset.modeDark ?? "dark",
+  };
   let mode: ThemeMode = "auto";
 
   const apply = (next: ThemeMode): void => {
@@ -34,8 +41,9 @@ function initTheme(): void {
     icons.forEach((el, key) => {
       el.style.display = key === mode ? "block" : "none";
     });
-    toggle.setAttribute("aria-label", `Theme: ${mode}`);
-    toggle.setAttribute("title", `Theme: ${mode}`);
+    const text = `${label}: ${modeNames[mode]}`;
+    toggle.setAttribute("aria-label", text);
+    toggle.setAttribute("title", text);
   };
 
   const param = params.get("theme");
@@ -85,14 +93,31 @@ function initDebug(): void {
   });
 }
 
-/* ---------- OS-aware primary CTA ---------- */
+/* ---------- OS-aware primary CTA (labels localized via data attrs) ---------- */
 
 function initOsCta(): void {
+  const cta = document.getElementById("osCta");
   const label = document.getElementById("osCtaLabel");
-  if (!label) return;
+  if (!cta || !label) return;
   const ua = navigator.userAgent || "";
-  if (/Windows/i.test(ua)) label.textContent = "Download for Windows";
-  else if (/Android|Linux/i.test(ua) && !/Mac/i.test(ua)) label.textContent = "Download for Linux";
+  if (/Windows/i.test(ua) && cta.dataset.labelWindows) {
+    label.textContent = cta.dataset.labelWindows;
+  } else if (/Android|Linux/i.test(ua) && !/Mac/i.test(ua) && cta.dataset.labelLinux) {
+    label.textContent = cta.dataset.labelLinux;
+  }
+}
+
+/* ---------- locale menu: close on outside click / Escape ---------- */
+
+function initLocaleMenu(): void {
+  const menu = document.getElementById("localeMenu") as HTMLDetailsElement | null;
+  if (!menu) return;
+  document.addEventListener("click", (e) => {
+    if (menu.open && !menu.contains(e.target as Node)) menu.open = false;
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menu.open) menu.open = false;
+  });
 }
 
 /* ---------- copy buttons ---------- */
@@ -172,6 +197,7 @@ initTheme();
 const isolated = isolateSection();
 initDebug();
 initOsCta();
+initLocaleMenu();
 initCopy();
 initReveals(isolated);
 initPupils();

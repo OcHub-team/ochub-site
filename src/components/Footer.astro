@@ -1,6 +1,13 @@
 ---
 import Mascot from "./Mascot.astro";
 import { LINKS } from "@/data/site";
+import { LOCALES, localeHome, type Locale, type Strings } from "@/i18n";
+
+interface Props {
+  locale: Locale;
+  t: Strings;
+}
+const { locale, t } = Astro.props;
 
 const PRODUCT_LINKS = [
   { label: "Overview", href: LINKS.docs.overview },
@@ -15,50 +22,47 @@ const PROJECT_LINKS = [
   { label: "Homebrew tap", href: LINKS.brewTap },
   { label: "GPL-3.0-or-later", href: LINKS.license },
 ];
-
-const LOCALES = [
-  { label: "English", active: true },
-  { label: "日本語", active: false },
-  { label: "简体中文", active: false },
-];
 ---
 
 <footer>
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <Mascot class="foot-mascot" notch="var(--mantle)" />
-        <p>
-          A native desktop control center for AI coding tools. Switch providers,
-          manage shared capabilities, and run a local relay from one place.
-        </p>
+        <Mascot notch="var(--mantle)" />
+        <p>{t.footer.tagline}</p>
       </div>
       <div>
-        <div class="foot-h">Product</div>
+        <div class="foot-h">{t.footer.product}</div>
         <div class="foot-links">
           {PRODUCT_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
         </div>
       </div>
       <div>
-        <div class="foot-h">Project</div>
+        <div class="foot-h">{t.footer.project}</div>
         <div class="foot-links">
           {PROJECT_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
         </div>
       </div>
       <div>
-        <div class="foot-h">Language</div>
+        <div class="foot-h">{t.footer.language}</div>
         <div class="foot-locales">
-          {LOCALES.map((l) => <button type="button" class:list={{ on: l.active }}>{l.label}</button>)}
+          {
+            LOCALES.map((l) => (
+              <a href={localeHome(l)} aria-current={l.key === locale.key ? "true" : undefined}>
+                {l.label}
+              </a>
+            ))
+          }
         </div>
       </div>
     </div>
     <div class="foot-base">
-      <span>© 2026 OcHub contributors</span>
+      <span>{t.footer.copyright}</span>
       <span>
-        A from-scratch GPUI + axum rewrite inspired by
+        {t.footer.creditLead}
         <a href={LINKS.ccSwitch}>cc-switch</a>.
       </span>
-      <span class="r">rust · gpui · axum · sqlite</span>
+      <span class="r">{t.footer.stack}</span>
     </div>
   </div>
 </footer>
@@ -78,12 +82,11 @@ const LOCALES = [
   .foot-links a { color: var(--subtext); text-decoration: none; font-size: 0.93rem; }
   .foot-links a:hover { color: var(--text); }
   .foot-locales { display: flex; flex-direction: column; gap: 9px; }
-  .foot-locales button {
-    background: none; border: none; padding: 0; cursor: pointer;
-    color: var(--subtext); font-size: 0.93rem; text-align: left; font-family: var(--font-body);
+  .foot-locales a {
+    color: var(--subtext); font-size: 0.93rem; text-decoration: none;
   }
-  .foot-locales button.on { color: var(--teal-ink); font-weight: 500; }
-  .foot-locales button:hover { color: var(--text); }
+  .foot-locales a[aria-current="true"] { color: var(--teal-ink); font-weight: 500; }
+  .foot-locales a:hover { color: var(--text); }
   .foot-base {
     border-top: 1px solid var(--border); padding: 20px 0 26px;
     display: flex; gap: 18px; flex-wrap: wrap; align-items: center;

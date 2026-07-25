@@ -5,9 +5,13 @@
  * today (dark mode is architected but not shipped), so this window stays
  * honest — and pops nicely against the dark page theme.
  */
+interface Props {
+  alt: string;
+}
+const { alt } = Astro.props;
 ---
 
-<div class="appwin" role="img" aria-label="The OcHub app window: Claude Code's connection list with an active relay">
+<div class="appwin" role="img" aria-label={alt}>
   <div class="appwin-titlebar">
     <span class="tl r"></span><span class="tl y"></span><span class="tl g"></span>
     <span class="t">OcHub</span>

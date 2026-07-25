@@ -1,15 +1,18 @@
 ---
 import { BREW_COMMAND, LINKS, PLATFORMS } from "@/data/site";
+import type { Strings } from "@/i18n";
+
+interface Props {
+  t: Strings;
+}
+const { t } = Astro.props;
 ---
 
 <section class="section dl" id="download">
   <div class="wrap">
-    <div class="eyebrow" data-reveal>Download</div>
-    <h2 data-reveal style="--d:.05s">Built on native runners, for every desktop.</h2>
-    <p class="dl-sub" data-reveal style="--d:.1s">
-      Every tag builds on the matching GitHub-hosted runner and ships with
-      <span class="mono">SHA256SUMS</span> and an artifact attestation.
-    </p>
+    <div class="eyebrow" data-reveal>{t.download.eyebrow}</div>
+    <h2 data-reveal style="--d:.05s">{t.download.h2}</h2>
+    <p class="dl-sub" data-reveal style="--d:.1s" set:html={t.download.subHtml} />
 
     <div class="dl-grid">
       <div class="plat-list" data-reveal style="--d:.12s">
@@ -21,9 +24,17 @@ import { BREW_COMMAND, LINKS, PLATFORMS } from "@/data/site";
                 <span class="arch">{plat.arch}</span>
               </div>
               <div class="files">
-                {plat.files.map((f) => <span class="file-tag">{f}</span>)}
+                {plat.files.map((f) => (
+                  f.url ? (
+                    <a class="file-tag file-link" href={f.url}>{f.label}</a>
+                  ) : (
+                    <span class="file-tag">{f.label}</span>
+                  )
+                ))}
               </div>
-              <a class="btn btn-ghost btn-small get" href={LINKS.releases}>Download</a>
+              <a class="btn btn-ghost btn-small get" href={plat.files[0]?.url ?? LINKS.releases}>
+                {t.download.get}
+              </a>
             </div>
           ))
         }
@@ -32,27 +43,23 @@ import { BREW_COMMAND, LINKS, PLATFORMS } from "@/data/site";
       <div class="dl-aside" data-reveal style="--d:.18s">
         <div class="term-card">
           <div class="th">
-            <span>Homebrew</span>
-            <button class="copy-btn" type="button" data-copy={BREW_COMMAND} aria-label="Copy Homebrew command">
+            <span>{t.download.homebrewTitle}</span>
+            <button class="copy-btn" type="button" data-copy={BREW_COMMAND} aria-label={t.a11y.copyBrew}>
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"
                 ><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.7"></rect><path d="M5 15V6a2 2 0 012-2h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg
               >
             </button>
           </div>
           <pre><span class="p">$</span> {BREW_COMMAND}
-<span class="c"># picks the Apple Silicon or Intel build for you</span></pre>
+<span class="c">{t.download.homebrewComment}</span></pre>
         </div>
         <div class="term-card">
-          <div class="th"><span>Verify a download</span></div>
+          <div class="th"><span>{t.download.verifyTitle}</span></div>
           <pre><span class="p">$</span> sha256sum -c SHA256SUMS --ignore-missing
 <span class="p">$</span> gh attestation verify ./OcHub.dmg \
     --repo OcHub-team/OcHub</pre>
         </div>
-        <div class="note-card">
-          <b>First launch on macOS:</b> the app isn't notarized yet, so approve it
-          once under <b>System Settings › Privacy &amp; Security › Open Anyway</b>.
-          In-app updates are never quarantined — it's a one-time step.
-        </div>
+        <div class="note-card" set:html={t.download.noteHtml} />
       </div>
     </div>
 
@@ -60,12 +67,7 @@ import { BREW_COMMAND, LINKS, PLATFORMS } from "@/data/site";
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"
         ><path d="M20 12a8 8 0 11-2.3-5.6M20 3v4h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg
       >
-      <span>
-        OcHub checks for updates after launch and can install them in place from
-        <b>Settings → About</b>. Signed packages only; a version that isn't newer is
-        refused. The <span class="mono">.deb</span> and portable ZIP stay check-only, so
-        they never fight <span class="mono">apt</span> or your file layout.
-      </span>
+      <span set:html={t.download.updateLineHtml} />
     </div>
   </div>
 </section>
@@ -92,6 +94,8 @@ import { BREW_COMMAND, LINKS, PLATFORMS } from "@/data/site";
     border: 1px solid var(--border); background: var(--panel);
     color: var(--subtext); border-radius: 6px; padding: 2.5px 9px;
   }
+  .file-link { text-decoration: none; transition: all 0.15s var(--ease-out); }
+  .file-link:hover { border-color: var(--teal); color: var(--teal-ink); }
   .dl-aside { display: flex; flex-direction: column; gap: 22px; margin-top: 34px; }
   .term-card {
     border: 1px solid var(--border); border-radius: var(--radius);
@@ -114,7 +118,7 @@ import { BREW_COMMAND, LINKS, PLATFORMS } from "@/data/site";
     border-radius: 10px; padding: 14px 16px; background: var(--surface);
     font-size: 0.9rem; color: var(--subtext);
   }
-  .note-card b { color: var(--text); }
+  .note-card :global(b) { color: var(--text); }
   .update-line {
     margin-top: 30px; display: flex; gap: 10px; align-items: flex-start;
     color: var(--subtext); font-size: 0.92rem; max-width: 64ch;

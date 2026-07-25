@@ -2,32 +2,43 @@
 import Mascot from "./Mascot.astro";
 import AppWindow from "./AppWindow.astro";
 import { BREW_COMMAND, VERSION } from "@/data/site";
+import type { Strings } from "@/i18n";
+
+interface Props {
+  t: Strings;
+}
+const { t } = Astro.props;
 ---
 
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
       <div class="version-pill rise" style="--d:.0s">
-        <span class="dot"></span><b>v{VERSION}</b>&nbsp;· pre-release
+        <span class="dot"></span><b>v{VERSION}</b>&nbsp;· {t.hero.versionSuffix}
       </div>
       <h1 class="rise" style="--d:.07s">
-        One hub for every <em>AI&nbsp;coding&nbsp;tool</em> you run.
+        {t.hero.h1Lead} <em>{t.hero.h1Em}</em>{t.hero.h1Tail}
       </h1>
       <p class="hero-sub rise" style="--d:.14s">
-        Switch API providers in one click, share MCP servers and skills across
-        clients, and relay traffic through your own local gateway — from a fast
-        native app. No browser shell, no webview.
+        {t.hero.sub}
       </p>
       <div class="hero-cta rise" style="--d:.21s">
-        <a class="btn btn-primary" href="#download" id="osCta">
+        <a
+          class="btn btn-primary"
+          href="#download"
+          id="osCta"
+          data-label-mac={t.hero.ctaMac}
+          data-label-windows={t.hero.ctaWindows}
+          data-label-linux={t.hero.ctaLinux}
+        >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"
             ><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 20h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg
           >
-          <span id="osCtaLabel">Download for macOS</span>
+          <span id="osCtaLabel">{t.hero.ctaMac}</span>
         </a>
         <div class="brew-chip">
           <code>$ {BREW_COMMAND}</code>
-          <button class="copy-btn" type="button" data-copy={BREW_COMMAND} aria-label="Copy Homebrew command">
+          <button class="copy-btn" type="button" data-copy={BREW_COMMAND} aria-label={t.a11y.copyBrew}>
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"
               ><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.7"></rect><path d="M5 15V6a2 2 0 012-2h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg
             >
@@ -38,7 +49,7 @@ import { BREW_COMMAND, VERSION } from "@/data/site";
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"
           ><path d="M12 9v4m0 4h.01M10.3 3.9L2.6 17a2 2 0 001.7 3h15.4a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg
         >
-        Pre-release software — back up your tool configs before the first run.
+        {t.hero.note}
       </p>
     </div>
 
@@ -46,7 +57,7 @@ import { BREW_COMMAND, VERSION } from "@/data/site";
       <div class="mascot" id="mascot" aria-hidden="true">
         <Mascot pupils />
       </div>
-      <AppWindow />
+      <AppWindow alt={t.a11y.appWindowAlt} />
     </div>
   </div>
 </section>

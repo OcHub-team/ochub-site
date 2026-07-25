@@ -1,19 +1,21 @@
 ---
 import { LINKS } from "@/data/site";
+import type { Strings } from "@/i18n";
+
+interface Props {
+  t: Strings;
+}
+const { t } = Astro.props;
 ---
 
 <section class="migrate">
   <div class="wrap">
     <div class="migrate-card" data-reveal>
       <div>
-        <div class="mq">Coming from cc-switch?</div>
-        <p>
-          A one-time, read-only import brings your providers over. OcHub owns
-          <code>~/.ochub/</code> and never writes back to <code>~/.cc-switch/</code> —
-          quit cc-switch before your first switch.
-        </p>
+        <div class="mq">{t.migrate.title}</div>
+        <p set:html={t.migrate.bodyHtml} />
       </div>
-      <a class="btn btn-ghost" href={LINKS.docs.overview}>Read the migration notes</a>
+      <a class="btn btn-ghost" href={LINKS.docs.overview}>{t.migrate.cta}</a>
     </div>
   </div>
 </section>
@@ -30,7 +32,7 @@ import { LINKS } from "@/data/site";
     font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; letter-spacing: -0.01em;
   }
   .migrate-card p { color: var(--subtext); font-size: 0.95rem; max-width: 52ch; margin-top: 4px; }
-  .migrate-card code { font-size: 0.82em; background: var(--inset); padding: 1.5px 6px; border-radius: 5px; }
+  .migrate-card :global(code) { font-size: 0.82em; background: var(--inset); padding: 1.5px 6px; border-radius: 5px; }
   .migrate-card .btn { margin-left: auto; }
 
   @media (max-width: 640px) {

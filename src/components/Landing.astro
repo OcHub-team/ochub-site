@@ -1,0 +1,42 @@
+---
+/**
+ * The whole landing page, shared by the three locale routes so they can't
+ * drift apart. Route files stay thin shells that pick a locale.
+ */
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Nav from "@/components/Nav.astro";
+import Hero from "@/components/Hero.astro";
+import ToolsStrip from "@/components/ToolsStrip.astro";
+import Capabilities from "@/components/Capabilities.astro";
+import Relay from "@/components/Relay.astro";
+import NativeBand from "@/components/NativeBand.astro";
+import Download from "@/components/Download.astro";
+import Migrate from "@/components/Migrate.astro";
+import Footer from "@/components/Footer.astro";
+import { localeByKey, stringsFor } from "@/i18n";
+
+interface Props {
+  locale: string;
+}
+
+const locale = localeByKey(Astro.props.locale);
+const t = await stringsFor(locale);
+---
+
+<BaseLayout title={t.meta.title} description={t.meta.description} locale={locale} skipToContent={t.a11y.skipToContent}>
+  <Nav locale={locale} t={t} />
+  <main id="main">
+    <Hero t={t} />
+    <ToolsStrip label={t.tools.label} />
+    <Capabilities t={t} />
+    <Relay t={t} />
+    <NativeBand t={t} />
+    <Download t={t} />
+    <Migrate t={t} />
+  </main>
+  <Footer locale={locale} t={t} />
+</BaseLayout>
+
+<script>
+  import "@/scripts/site";
+</script>

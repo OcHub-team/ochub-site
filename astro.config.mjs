@@ -1,10 +1,12 @@
 import { defineConfig } from "astro/config";
 
-// Canonical origin for the future production home of this page. Drives
-// canonical URLs and absolute OG URLs. The docs site owns docs.ochub.org;
-// this landing page is meant to answer at the apex domain eventually.
+// Canonical origin — drives canonical URLs, hreflang, and absolute OG URLs.
+// Currently the GitHub Pages host; flip both fields when a custom domain
+// (e.g. ochub.org, next to docs.ochub.org) gets bound.
 export default defineConfig({
-  site: "https://ochub.org",
+  site: "https://ochub-team.github.io",
+  // The repo deploys as a GitHub Pages *project* site under this subpath.
+  base: "/ochub-site",
   output: "static",
   prefetch: {
     prefetchAll: true,

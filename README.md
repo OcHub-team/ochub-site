@@ -7,43 +7,57 @@ Built with **Astro 7 + Vite 8** (the current major — Astro 8 does not exist
 yet), TypeScript strict mode, and hand-rolled modern CSS
 (`light-dark()`, OKLCH, `color-mix()`). Documentation lives at
 [docs.ochub.org](https://docs.ochub.org) (separate Astro site); this page is
-the future front door.
+the front door.
+
+**Live: https://ochub-team.github.io/ochub-site/** (GitHub Pages, from `main`)
 
 ## Develop
 
 ```sh
 pnpm install
-pnpm dev        # local dev server
+pnpm dev        # local dev server (serves under /ochub-site/, like Pages)
 pnpm build      # static output in dist/
 pnpm check      # astro check (types) + build
 ```
 
-pnpm 11 note: `pnpm-workspace.yaml` carries `allowBuilds` for `esbuild` —
-without it, install aborts on esbuild's postinstall script.
+Notes:
+
+- pnpm 11: `pnpm-workspace.yaml` carries `allowBuilds` for `esbuild` —
+  without it, install aborts on esbuild's postinstall script.
+- `astro.config.mjs` sets `base: "/ochub-site"` because the repo deploys as a
+  GitHub Pages *project* site. Drop it and update `site` when a custom
+  domain gets bound.
 
 ## Structure
 
 ```
 src/
-├── data/site.ts          # all copy + links + build-time release version fetch
+├── i18n/                 # en.ts (canonical shape) + ja.ts + zh.ts,
+│                         # index.ts = locale registry & Strings contract
+├── data/site.ts          # links, platform matrix, build-time release fetch
 ├── styles/global.css     # design tokens (light/dark via color-scheme + light-dark())
-├── layouts/BaseLayout.astro  # head, fonts, no-FOUC theme bootstrap
-├── components/           # Nav, Hero, AppWindow, Mascot, ToolsStrip,
-│                         # Capabilities, Relay, RelayDiagram, NativeBand,
-│                         # Download, Migrate, Footer
-├── scripts/site.ts       # theme tri-state, reveals, copy, pupils, QA params
-└── pages/index.astro
+├── layouts/BaseLayout.astro  # head, fonts, hreflang, no-FOUC theme bootstrap
+├── components/           # Landing (shared page body), Nav, Hero, AppWindow,
+│                         # Mascot, ToolsStrip, Capabilities, Relay,
+│                         # RelayDiagram, NativeBand, Download, Migrate, Footer
+├── scripts/site.ts       # theme tri-state, reveals, copy, pupils, locale
+│                         # menu, OS-aware CTA, QA params
+└── pages/                # index.astro (en) + ja/ + zh/ — thin locale shells
 prototype/index.html      # the original single-file design draft (frozen)
 ```
 
 Conventions:
 
-- **Copy lives in `src/data/site.ts`**, not in markup — a future ja/zh-Hans
-  pass swaps one module per locale.
-- The release version pill is fetched from the GitHub Releases API at build
-  time, with a pinned fallback when offline.
+- **Copy lives in `src/i18n/*.ts`**, one module per locale. `ja.ts`/`zh.ts`
+  `satisfy` the English shape — a missing translation is a compile error.
+- Routes are thin shells over `Landing.astro`; locale codes match the app
+  (`crates/app/i18n`) and docs.ochub.org.
+- The release version and the platform download buttons come from the
+  GitHub Releases API **at build time** (asset names matched to
+  `browser_download_url`s); when the fetch fails, the version falls back to
+  a pinned value and buttons fall back to the releases page.
 - Fonts are self-hosted via fontsource packages (Space Grotesk, IBM Plex
-  Sans, JetBrains Mono); no CDN dependency.
+  Sans, JetBrains Mono); CJK falls back to system Noto Sans.
 - Scoped component styles are the default; reach into child components with
   `:global()` (see the Mascot styling in Nav/Footer).
 
@@ -65,8 +79,8 @@ toggle cycles auto → light → dark and persists to localStorage.
 | `?only=<section-id>` | Render one section in isolation (`relay`, `native`, `download`, …) — screenshots and design review. |
 | `?debug=1` | Write horizontally overflowing elements into `<title>`. |
 
-## Roadmap
+## Deploy
 
-- [ ] Trilingual copy (en / ja / zh-Hans) — currently English only
-- [ ] Real platform download URLs per release artifact
-- [ ] Deploy (GitHub Pages or Cloudflare, next to docs.ochub.org)
+GitHub Pages serves `main` / root (enabled via
+`gh api repos/OcHub-team/ochub-site/pages`). Redeploy = push to `main`.
+Move to Cloudflare next to docs.ochub.org when the apex domain is ready.
